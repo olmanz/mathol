@@ -15,6 +15,14 @@ pub fn pow(base: i64, mut exponent: i64) -> i64 {
     }
 }
 
+pub fn upow(base: u64, mut exponent: u64) -> u64 {
+    if exponent == 0 {
+        1
+    } else {
+        base * upow(base, exponent - 1)
+    }
+}
+
 pub fn pythagoras2d(a: f64, b: f64) -> f64 {
     ((a * a) + (b * b)).sqrt()
 }

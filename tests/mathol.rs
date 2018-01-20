@@ -2,6 +2,7 @@ extern crate mathol;
 use mathol::basic::Point;
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
+use mathol::stochastics::{faculty, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use std::cmp::Ordering;
 
 #[test]
@@ -130,4 +131,73 @@ fn test_spherical_to_cartesic() {
     assert_eq!(3.0000000000000004, cart.x);
     assert_eq!(3.9999999999999996, cart.y);
     assert_eq!(5.000000000000001, cart.z);
+}
+
+#[test]
+fn test_faculty() {
+    assert_eq!(362880, faculty(9));
+}
+
+#[test]
+fn test_permutation() {
+    assert_eq!(10, permutation(5, vec![3, 2]));
+}
+
+#[test]
+#[should_panic(expected="Sum of parts is not equal to whole")]
+fn test_permutation_panic_1() {
+    permutation(5, vec![3, 3]);
+}
+
+#[test]
+#[should_panic(expected="Sum of parts is not equal to whole")]
+fn test_permutation_panic_2() {
+    permutation(5, vec![1, 3]);
+}
+
+#[test]
+fn test_combination_1() {
+    assert_eq!(120, combination(10, 3));
+}
+
+#[test]
+fn test_combination_2() {
+    assert_eq!(1, combination(10, 10));
+}
+
+#[test]
+#[should_panic(expected="Number of selections outgrows the number of elements")]
+fn test_combination_panic() {
+    combination(10, 11);
+}
+
+#[test]
+fn test_combination_with_repetition() {
+    assert_eq!(220, combination_with_repetition(10, 3));
+}
+
+#[test]
+fn test_combination_with_repetition_2() {
+    assert_eq!(92378, combination_with_repetition(10, 10));
+}
+
+#[test]
+fn test_variation_1() {
+    assert_eq!(336, variation(8, 3));
+}
+
+#[test]
+fn test_variation_2() {
+    assert_eq!(40320, variation(8, 8));
+}
+
+#[test]
+#[should_panic(expected="Number of selections outgrows the number of elements")]
+fn test_variation_panic() {
+    variation(8, 9);
+}
+
+#[test]
+fn test_variation_with_repetition() {
+    assert_eq!(125, variation_with_repetition(5, 3));
 }
