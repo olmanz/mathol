@@ -3,7 +3,7 @@ use mathol::basic::Point;
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
 use mathol::stochastics::{faculty, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
-use mathol::stochastics::binomial;
+use mathol::stochastics::{binomial_distribution, hypergeometric_distribution};
 use std::cmp::Ordering;
 
 #[test]
@@ -213,5 +213,16 @@ fn test_binomial() {
     vec.push(0.0012150000000000006);
     vec.push(0.00005400000000000003);
     vec.push(0.0000010000000000000006);
-    assert_eq!(vec, binomial(6, 0.1));
+    assert_eq!(vec, binomial_distribution(6, 0.1));
+}
+
+#[test]
+fn test_hypergeometric() {
+    let mut vec = vec![];
+    vec.push(0.010101010101010102);
+    vec.push(0.1414141414141414);
+    vec.push(0.42424242424242425);
+    vec.push(0.35353535353535354);
+    vec.push(0.0707070707070707);
+    assert_eq!(vec, hypergeometric_distribution(12, 7, 4));
 }

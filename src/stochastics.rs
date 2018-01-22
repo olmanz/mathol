@@ -48,12 +48,12 @@ pub fn variation_with_repetition(n: i32, k: i32) -> i32 {
     n.pow(k as u32)
 }
 
-pub fn binomial(n: i32, p: f64) -> Vec<f64> {
+pub fn binomial_distribution(n: i32, p: f64) -> Vec<f64> {
     let q = 1.0 - p;
     let mut binomial: Vec<f64> = Vec::with_capacity((n + 1) as usize);
 
     for x in 0..n+1 {
-        let tmp = (faculty(n) as f64) / ((faculty(x) * faculty(n - x)) as f64);
+        let tmp = combination(n, x) as f64;
         let result = tmp * p.powi(x) * q.powi(n - x);
         binomial.push(result);
     }
@@ -61,3 +61,14 @@ pub fn binomial(n: i32, p: f64) -> Vec<f64> {
     binomial
 }
 
+pub fn hypergeometric_distribution(N: i32, M: i32, n: i32) -> Vec<f64> {
+    let mut hypergeometric: Vec<f64> = Vec::with_capacity((n + 1) as usize);
+
+    for x in 0..n+1 {
+        let tmp = (combination(M, x) * combination(N - M, n - x)) as f64;
+        let result = tmp / combination(N, n) as f64;
+        hypergeometric.push(result);
+    }
+
+    hypergeometric
+}
