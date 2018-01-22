@@ -3,6 +3,7 @@ use mathol::basic::Point;
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
 use mathol::stochastics::{faculty, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
+use mathol::stochastics::binomial;
 use std::cmp::Ordering;
 
 #[test]
@@ -178,7 +179,7 @@ fn test_combination_with_repetition() {
 
 #[test]
 fn test_combination_with_repetition_2() {
-    assert_eq!(92378, combination_with_repetition(10, 10));
+    assert_eq!(35, combination_with_repetition(4, 4));
 }
 
 #[test]
@@ -200,4 +201,17 @@ fn test_variation_panic() {
 #[test]
 fn test_variation_with_repetition() {
     assert_eq!(125, variation_with_repetition(5, 3));
+}
+
+#[test]
+fn test_binomial() {
+    let mut vec = vec![];
+    vec.push(0.5314410000000002);
+    vec.push(0.35429400000000016);
+    vec.push(0.09841500000000003);
+    vec.push(0.014580000000000004);
+    vec.push(0.0012150000000000006);
+    vec.push(0.00005400000000000003);
+    vec.push(0.0000010000000000000006);
+    assert_eq!(vec, binomial(6, 0.1));
 }

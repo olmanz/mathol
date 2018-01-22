@@ -7,7 +7,7 @@ pub fn get_distance(p: &Point, q: &Point) -> f64 {
     ((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)).sqrt()
 }
 
-pub fn pow(base: i64, mut exponent: i64) -> i64 {
+pub fn pow(base: i64, exponent: i64) -> i64 {
     if exponent == 0 {
         1
     } else {
@@ -15,7 +15,7 @@ pub fn pow(base: i64, mut exponent: i64) -> i64 {
     }
 }
 
-pub fn upow(base: u64, mut exponent: u64) -> u64 {
+pub fn upow(base: u64, exponent: u64) -> u64 {
     if exponent == 0 {
         1
     } else {
