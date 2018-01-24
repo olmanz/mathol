@@ -1,5 +1,4 @@
 use basic::{pythagoras2d, pythagoras3d};
-use std::cmp::Ordering;
 
 /// Rust struct for points in the two-dimensional cartesic coordinate system.
 pub struct Cartesic2D {
@@ -79,11 +78,16 @@ impl Cartesic3D {
 
 /// Calculate the angle of the polar axis in relaion to the x-axis
 fn get_angle(x: f64, y: f64) -> f64 {
-    match (x, y.partial_cmp(&0.0)) {
-        (0.0, Some(Ordering::Less)) => 270.0,
-        (0.0, Some(Ordering::Equal)) => 0.0,
-        (0.0, Some(Ordering::Greater)) => 90.0,
-        (_, _) => (y / x).atan().to_degrees(),
+    if x == 0.0 {
+        if y < 0.0 {
+            270.0
+        } else if y > 0.0 {
+            90.0
+        } else {
+            0.0
+        }
+    } else {
+        (y / x).atan().to_degrees()
     }
 }
 
