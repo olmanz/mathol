@@ -1,3 +1,6 @@
+extern crate num;
+use self::num::{Num};
+
 pub struct Point {
     pub x: f64,
     pub y: f64,
@@ -7,11 +10,13 @@ pub fn get_distance(p: &Point, q: &Point) -> f64 {
     ((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)).sqrt()
 }
 
-pub fn pow(base: i64, exponent: i64) -> i64 {
-    if exponent == 0 {
-        1
+pub fn pow<T, U>(base: T, exponent: U) -> T
+    where T: Num + Copy, U: Num
+{
+    if exponent == U::zero() {
+        T::one()
     } else {
-        base * pow(base, exponent - 1)
+        base * pow(base, exponent - U::one())
     }
 }
 
