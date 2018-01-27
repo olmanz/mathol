@@ -35,3 +35,43 @@ pub fn pythagoras2d(a: f64, b: f64) -> f64 {
 pub fn pythagoras3d(a: f64, b: f64, c: f64) -> f64 {
     ((a * a) + (b * b) + (c * c)).sqrt()
 }
+
+pub trait ConvertTof64 {
+    fn to_f64(self) -> f64;
+}
+
+impl ConvertTof64 for i8 {
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
+}
+
+impl ConvertTof64 for i16 {
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
+}
+
+impl ConvertTof64 for i32 {
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
+}
+
+impl ConvertTof64 for i64 {
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
+}
+
+impl ConvertTof64 for f32 {
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
+}
+
+impl ConvertTof64 for f64 {
+    fn to_f64(self) -> f64 {
+        self
+    }
+}

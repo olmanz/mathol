@@ -2,7 +2,7 @@ extern crate mathol;
 use mathol::basic::{Point, pow};
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
-use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation};
+use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
 
@@ -243,13 +243,13 @@ fn test_variation_panic() {
     variation(8, 9);
 }
 
-//#[test]
-//fn test_variation_with_repetition() {
-//    assert_eq!(125, variation_with_repetition(5, 3));
-//}
-//
 #[test]
-fn test_binomial() {
+fn test_variation_with_repetition() {
+    assert_eq!(125, variation_with_repetition(5, 3));
+}
+
+#[test]
+fn test_binomial_distribution() {
     let mut vec = vec![];
     vec.push(0.5314410000000002);
     vec.push(0.35429400000000016);
@@ -258,7 +258,19 @@ fn test_binomial() {
     vec.push(0.0012150000000000004);
     vec.push(0.00005400000000000002);
     vec.push(0.0000010000000000000004);
-    assert_eq!(vec, binomial_distribution(6, 0.1));
+    assert_eq!(vec, binomial_distribution(6_i32, 0.1));
+}
+
+#[test]
+#[should_panic(expected="p must be in a range between 0 and 1!")]
+fn test_binomial_panic_1() {
+    binomial_distribution(6, -0.1);
+}
+
+#[test]
+#[should_panic(expected="p must be in a range between 0 and 1!")]
+fn test_binomial_panic_2() {
+    binomial_distribution(6, 1.1);
 }
 
 //#[test]
@@ -275,7 +287,7 @@ fn test_binomial() {
 //}
 //
 #[test]
-fn test_hypergeometric() {
+fn test_hypergeometric_distribution() {
     let mut vec = vec![];
     vec.push(0.010101010101010102);
     vec.push(0.1414141414141414);
@@ -286,7 +298,19 @@ fn test_hypergeometric() {
 }
 
 #[test]
-fn test_poisson() {
+#[should_panic(expected="Parameter M must be smaller than N!")]
+fn test_hypergeometric_panic_1() {
+    hypergeometric_distribution(7, 12, 4);
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be smaller than N!")]
+fn test_hypergeometric_panic_2() {
+    hypergeometric_distribution(12, 7, 14);
+}
+
+#[test]
+fn test_poisson_distribution() {
     let my = 1;
     assert_eq!(0.36787944117144233, poisson_distribution(my, 0));
     assert_eq!(0.36787944117144233, poisson_distribution(my, 1));
@@ -296,9 +320,22 @@ fn test_poisson() {
 }
 
 #[test]
+#[should_panic(expected="Parameter µ must be positive!")]
+fn test_poisson_panic() {
+    poisson_distribution(-1, 0);
+}
+
+#[test]
 fn test_gaussian_distribution() {
     assert_eq!(0.10648266850745075, gaussian_distribution(2.0, 3.0, 4.0));
     assert_eq!(0.10648266850745075, gaussian_distribution(2, 3, 4));
+    assert_eq!(0.017996988837729353, gaussian_distribution(2, 3, -4));
+}
+
+#[test]
+#[should_panic(expected="Parameter \u{03c3} must be bigger than 0!")]
+fn test_gaussian_panic() {
+    gaussian_distribution(2, -1, 4);
 }
 
 #[test]
@@ -318,4 +355,10 @@ fn test_exponential_density() {
     assert_eq!(2.0, exponential_distribution(2.0, 0.0));
     assert_eq!(0.2706705664732254, exponential_distribution(2.0, 1.0));
     assert_eq!(0.03663127777746836, exponential_distribution(2.0, 2.0));
+}
+
+#[test]
+#[should_panic(expected="Parameter \u{03bb} must be bigger than 0!")]
+fn test_exponential_panic() {
+    exponential_distribution(-1, 0);
 }
