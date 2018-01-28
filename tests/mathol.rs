@@ -191,6 +191,18 @@ fn test_permutation_panic_2() {
 }
 
 #[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_permutation_panic_3() {
+    permutation(-1, vec![3, 2]);
+}
+
+#[test]
+#[should_panic(expected="Parameter karr is an empty vector!")]
+fn test_permutation_panic_4() {
+    permutation(5, vec![]);
+}
+
+#[test]
 fn test_combination_1() {
     assert_eq!(10, combination(5_u8, 3_u8));
     assert_eq!(56, combination(8_u16, 5_u16));
@@ -207,8 +219,20 @@ fn test_combination_1() {
 
 #[test]
 #[should_panic(expected="Number of selections outgrows the number of elements")]
-fn test_combination_panic() {
+fn test_combination_panic_1() {
     combination(10, 11);
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_combination_panic_2() {
+    combination(-1, 2);
+}
+
+#[test]
+#[should_panic(expected="Parameter k must be a positive integer!")]
+fn test_combination_panic_3() {
+    combination(2, -1);
 }
 
 #[test]
@@ -219,6 +243,18 @@ fn test_combination_with_repetition() {
 #[test]
 fn test_combination_with_repetition_2() {
     assert_eq!(35, combination_with_repetition(4, 4));
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_combination_with_repetition_panic_1() {
+    combination(-1, 2);
+}
+
+#[test]
+#[should_panic(expected="Parameter k must be a positive integer!")]
+fn test_combination_with_repetition_panic_2() {
+    combination(2, -1);
 }
 
 #[test]
@@ -244,8 +280,32 @@ fn test_variation_panic() {
 }
 
 #[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_variation_panic_2() {
+    combination(-1, 2);
+}
+
+#[test]
+#[should_panic(expected="Parameter k must be a positive integer!")]
+fn test_variation_panic_3() {
+    combination(2, -1);
+}
+
+#[test]
 fn test_variation_with_repetition() {
     assert_eq!(125, variation_with_repetition(5, 3));
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_variation_with_repetition_panic_1() {
+    combination(-1, 2);
+}
+
+#[test]
+#[should_panic(expected="Parameter k must be a positive integer!")]
+fn test_variation_with_repetition_panic_2() {
+    combination(2, -1);
 }
 
 #[test]
@@ -271,6 +331,12 @@ fn test_binomial_panic_1() {
 #[should_panic(expected="p must be in a range between 0 and 1!")]
 fn test_binomial_panic_2() {
     binomial_distribution(6, 1.1);
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_binomial_panic_3() {
+    binomial_distribution(0, 0.5);
 }
 
 //#[test]
@@ -310,6 +376,24 @@ fn test_hypergeometric_panic_2() {
 }
 
 #[test]
+#[should_panic(expected="Parameter N must be a positive integer!")]
+fn test_hypergeometric_panic_3() {
+    hypergeometric_distribution(0, 7, 14);
+}
+
+#[test]
+#[should_panic(expected="Parameter M must be a positive integer!")]
+fn test_hypergeometric_panic_4() {
+    hypergeometric_distribution(12, 0, 14);
+}
+
+#[test]
+#[should_panic(expected="Parameter n must be a positive integer!")]
+fn test_hypergeometric_panic_5() {
+    hypergeometric_distribution(12, 7, 0);
+}
+
+#[test]
 fn test_poisson_distribution() {
     let my = 1;
     assert_eq!(0.36787944117144233, poisson_distribution(my, 0));
@@ -321,8 +405,14 @@ fn test_poisson_distribution() {
 
 #[test]
 #[should_panic(expected="Parameter µ must be positive!")]
-fn test_poisson_panic() {
+fn test_poisson_panic_1() {
     poisson_distribution(-1, 0);
+}
+
+#[test]
+#[should_panic(expected="Parameter x must be a positive integer!")]
+fn test_poisson_panic_2() {
+    poisson_distribution(5, -1);
 }
 
 #[test]

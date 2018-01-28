@@ -93,7 +93,7 @@ fn get_angle(x: f64, y: f64) -> f64 {
 
 /// Rust struct for points in the cylindrical coordinate system.
 pub struct Cylindrical {
-    /// DIctance from z-axis to the point
+    /// Distance from z-axis to the point
     pub rho: f64,
     /// Angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane
     pub phi: f64,
