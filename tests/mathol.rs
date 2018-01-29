@@ -5,6 +5,7 @@ use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Sphe
 use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
+use mathol::statistics::Sample;
 
 #[test]
 fn test_pow() {
@@ -451,4 +452,25 @@ fn test_exponential_density() {
 #[should_panic(expected="Parameter \u{03bb} must be bigger than 0!")]
 fn test_exponential_panic() {
     exponential_distribution(-1, 0);
+}
+
+#[test]
+fn test_sample_build() {
+    let n = 25;
+    let a = vec![1, 3, 6, 9, 4, 2];
+    let r = vec![0.04, 0.12, 0.24, 0.36, 0.16, 0.08];
+    let f = vec![0.04, 0.16, 0.40, 0.76, 0.92, 1.0];
+    let sample = Sample::build(n, &a);
+    assert_eq!(n, sample.number_of_elements);
+    assert_eq!(a, sample.absolute_frequency);
+    assert_eq!(r, sample.relative_frequency);
+    assert_eq!(f, sample.distribution_function);
+}
+
+#[test]
+#[should_panic(expected="Sum of sample units must equal number_of_elements")]
+fn test_sample_build_panic() {
+    let n = 25;
+    let a = vec![1, 3, 6, 9, 4, 1];
+    Sample::build(n, &a);
 }
