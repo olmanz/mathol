@@ -6,7 +6,7 @@ use std::iter::Iterator;
 //use std::f64::consts::E;
 use std::f64::consts::PI;
 //use std::convert::Into;
-use basic::{pow, ConvertTof64};
+use basic::{pow, Convert};
 
 /// Calculates the factorial of a given number n.
 /// Returns the calculated factorial.
@@ -129,8 +129,8 @@ pub fn variation_with_repetition<T>(n: T, k: T) -> T
 /// p is the probability for an event.
 /// Panics if p is not between 0 and 1.
 pub fn binomial_distribution<T, U>(n: T, p: U) -> Vec<f64>
-    where T: Zero + PrimInt + Integer + Product + ConvertTof64,
-          U: One + Sub + Float + ConvertTof64
+    where T: Zero + PrimInt + Integer + Product + Convert,
+          U: One + Sub + Float + Convert
 {
     if n < T::one() {
         panic!("Parameter n must be a positive integer!");
@@ -161,7 +161,7 @@ pub fn binomial_distribution<T, U>(n: T, p: U) -> Vec<f64>
 /// Panics if M or n are bigger than N.
 #[allow(non_snake_case)]
 pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Vec<f64>
-    where T: PrimInt + Integer + Product + Sub + ConvertTof64
+    where T: PrimInt + Integer + Product + Sub + Convert
 {
     if N < T::one() {
         panic!("Parameter N must be a positive integer!");
@@ -192,7 +192,7 @@ pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Vec<f64>
 }
 
 pub fn poisson_distribution<T>(my: T, x: T) -> f64
-    where T: PrimInt + Integer + Product + ConvertTof64
+    where T: PrimInt + Integer + Product + Convert
 {
     if my <= T::zero() {
         panic!("Parameter µ must be positive!");
@@ -209,7 +209,7 @@ pub fn poisson_distribution<T>(my: T, x: T) -> f64
 }
 
 pub fn gaussian_distribution<T>(my: T, sigma: T, x: T) -> f64
-    where T: ConvertTof64 + Copy + Zero + PartialOrd
+    where T: Convert + Copy + Zero + PartialOrd
 {
     if sigma <= T::zero() {
         panic!("Parameter \u{03c3} must be bigger than 0!");
@@ -224,7 +224,7 @@ pub fn gaussian_distribution<T>(my: T, sigma: T, x: T) -> f64
 }
 
 pub fn standard_distribution<T>(x: T) -> f64
-    where T: ConvertTof64
+    where T: Convert
 {
     let a = (2.0 * PI).sqrt();
     let b = -0.5 * pow(x.to_f64(), 2);
@@ -234,7 +234,7 @@ pub fn standard_distribution<T>(x: T) -> f64
 }
 
 pub fn exponential_distribution<T>(lambda: T, x: T) -> f64
-    where T: Zero + ConvertTof64 + PartialOrd + Copy
+    where T: Zero + Convert + PartialOrd + Copy
 {
     if lambda <= T::zero() {
         panic!("Parameter \u{03bb} must be bigger than 0!");

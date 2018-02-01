@@ -5,7 +5,7 @@ use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Sphe
 use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
-use mathol::statistics::Sample;
+use mathol::statistics::{get_sample, get_mean, get_variance, get_standard_deviation};
 
 #[test]
 fn test_pow() {
@@ -455,22 +455,68 @@ fn test_exponential_panic() {
 }
 
 #[test]
-fn test_sample_build() {
-    let n = 25;
-    let a = vec![1, 3, 6, 9, 4, 2];
-    let r = vec![0.04, 0.12, 0.24, 0.36, 0.16, 0.08];
-    let f = vec![0.04, 0.16, 0.40, 0.76, 0.92, 1.0];
-    let sample = Sample::build(n, &a);
-    assert_eq!(n, sample.number_of_elements);
-    assert_eq!(a, sample.absolute_frequency);
-    assert_eq!(r, sample.relative_frequency);
-    assert_eq!(f, sample.distribution_function);
+fn test_get_absolute_frequency() {
+    let a = vec![9, 5, 4, 9, 9, 0, 4];
+    let map = get_sample(&a);
+    let sample = &*(map.get(&9).unwrap());
+    assert_eq!(3, sample.absolute_frequency);
+    assert_eq!(0.42857142857142855, sample.relative_frequency);
 }
 
 #[test]
-#[should_panic(expected="Sum of sample units must equal number_of_elements")]
-fn test_sample_build_panic() {
-    let n = 25;
-    let a = vec![1, 3, 6, 9, 4, 1];
-    Sample::build(n, &a);
+fn test_mean_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.1, get_mean(&vec));
 }
+
+#[test]
+fn test_variance_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(0.034285714285714246, get_variance(&vec));
+}
+
+#[test]
+fn test_standard_deviation_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(0.18516401995451018, get_standard_deviation(&vec));
+}
+
+#[test]
+fn test_mean_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(7.0, get_mean(&vec));
+}
+
+#[test]
+fn test_variance_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(4.8, get_variance(&vec));
+}
+
+#[test]
+fn test_standard_deviation_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(2.1908902300206643, get_standard_deviation(&vec));
+}
+
+
+//#[test]
+//fn test_sample_build() {
+//    let n = 25;
+//    let a = vec![1, 3, 6, 9, 4, 2];
+//    let r = vec![0.04, 0.12, 0.24, 0.36, 0.16, 0.08];
+//    let f = vec![0.04, 0.16, 0.40, 0.76, 0.92, 1.0];
+//    let sample = Sample::build(n, &a);
+//    assert_eq!(n, sample.number_of_elements);
+//    assert_eq!(a, sample.absolute_frequency);
+//    assert_eq!(r, sample.relative_frequency);
+//    assert_eq!(f, sample.distribution_function);
+//}
+//
+//#[test]
+//#[should_panic(expected="Sum of sample units must equal number_of_elements")]
+//fn test_sample_build_panic() {
+//    let n = 25;
+//    let a = vec![1, 3, 6, 9, 4, 1];
+//    Sample::build(n, &a);
+//}
