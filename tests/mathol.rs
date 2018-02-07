@@ -5,7 +5,8 @@ use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Sphe
 use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
-use mathol::statistics::{get_sample, get_mean, get_variance, get_standard_deviation};
+use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
+use mathol::statistics::{get_min, get_max, get_span};
 
 #[test]
 fn test_pow() {
@@ -454,51 +455,177 @@ fn test_exponential_panic() {
     exponential_distribution(-1, 0);
 }
 
+//#[test]
+//fn test_get_absolute_frequency() {
+//    let a = vec![9.0, 5.0, 4.0, 9.0, 9.0, 0.0, 4.0];
+//    let map = get_sample_2(&a);
+//    let sample = &*(map.get(&9).unwrap());
+//    assert_eq!(3, sample.absolute_frequency);
+//    assert_eq!(0.42857142857142855, sample.relative_frequency);
+//}
+
 #[test]
-fn test_get_absolute_frequency() {
-    let a = vec![9, 5, 4, 9, 9, 0, 4];
-    let map = get_sample(&a);
-    let sample = &*(map.get(&9).unwrap());
-    assert_eq!(3, sample.absolute_frequency);
-    assert_eq!(0.42857142857142855, sample.relative_frequency);
+fn test_arithmetic_mean_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.1, get_arithmetic_mean(&vec).unwrap());
 }
 
 #[test]
-fn test_mean_1() {
-    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
-    assert_eq!(10.1, get_mean(&vec));
+fn test_arithmetic_mean_2() {
+    let vec = [9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.1, get_arithmetic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_arithmetic_mean_3() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(7.0, get_arithmetic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_arithmetic_mean_4() {
+    let vec = vec![9];
+    assert_eq!(9.0, get_arithmetic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_arithmetic_mean_5() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_arithmetic_mean(&vec));
 }
 
 #[test]
 fn test_variance_1() {
     let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
-    assert_eq!(0.034285714285714246, get_variance(&vec));
+    assert_eq!(0.034285714285714246, get_variance(&vec).unwrap());
+}
+
+#[test]
+fn test_harmonic_mean_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.097006905739999, get_harmonic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_harmonic_mean_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(6.550868486352359, get_harmonic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_harmonic_mean_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_harmonic_mean(&vec));
+}
+
+
+#[test]
+fn test_harmonic_mean_4() {
+    let vec = vec![8, 6, 5, 0, 6, 6];
+    assert_eq!(Err("Vector or Array contains zero"), get_harmonic_mean(&vec));
+}
+
+#[test]
+fn test_quadratic_mean_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.101485039339513, get_quadratic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_quadratic_mean_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(7.280109889280518, get_quadratic_mean(&vec).unwrap());
+}
+
+#[test]
+fn test_quadratic_mean_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_quadratic_mean(&vec));
+}
+#[test]
+fn test_variance_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(4.8, get_variance(&vec).unwrap());
+}
+
+#[test]
+fn test_variance_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_variance(&vec));
 }
 
 #[test]
 fn test_standard_deviation_1() {
     let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
-    assert_eq!(0.18516401995451018, get_standard_deviation(&vec));
+    assert_eq!(0.18516401995451018, get_standard_deviation(&vec).unwrap());
 }
 
-#[test]
-fn test_mean_2() {
-    let vec = vec![8, 6, 5, 11, 6, 6];
-    assert_eq!(7.0, get_mean(&vec));
-}
-
-#[test]
-fn test_variance_2() {
-    let vec = vec![8, 6, 5, 11, 6, 6];
-    assert_eq!(4.8, get_variance(&vec));
-}
 
 #[test]
 fn test_standard_deviation_2() {
     let vec = vec![8, 6, 5, 11, 6, 6];
-    assert_eq!(2.1908902300206643, get_standard_deviation(&vec));
+    assert_eq!(2.1908902300206643, get_standard_deviation(&vec).unwrap());
 }
 
+#[test]
+fn test_standard_deviation_3() {
+    let vec: Vec<i64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_standard_deviation(&vec));
+}
+
+#[test]
+fn test_get_min_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(9.8, get_min(&vec).unwrap());
+}
+
+#[test]
+fn test_get_min_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(5, get_min(&vec).unwrap());
+}
+
+#[test]
+fn test_get_min_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_min(&vec));
+}
+
+#[test]
+fn test_get_max_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(10.3, get_max(&vec).unwrap());
+}
+
+#[test]
+fn test_get_max_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(11, get_max(&vec).unwrap());
+}
+
+#[test]
+fn test_get_max_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_min(&vec));
+}
+
+#[test]
+fn test_get_span_1() {
+    let vec = vec![9.8, 10.1, 10.3, 10.2, 10.2, 10.0, 9.9, 10.3];
+    assert_eq!(0.5, get_span(&vec).unwrap());
+}
+
+#[test]
+fn test_get_span_2() {
+    let vec = vec![8, 6, 5, 11, 6, 6];
+    assert_eq!(6, get_span(&vec).unwrap());
+}
+
+#[test]
+fn test_get_span_3() {
+    let vec: Vec<f64> = vec![];
+    assert_eq!(Err("Vector or Array is empty"), get_span(&vec));
+}
 
 //#[test]
 //fn test_sample_build() {
