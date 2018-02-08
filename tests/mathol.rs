@@ -7,6 +7,7 @@ use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, po
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
+use mathol::vectoroperations::Vectoroperations;
 
 #[test]
 fn test_pow() {
@@ -581,23 +582,26 @@ fn test_get_span_3() {
     assert_eq!(Err("Vector or Array is empty"), get_span(&vec));
 }
 
-//#[test]
-//fn test_sample_build() {
-//    let n = 25;
-//    let a = vec![1, 3, 6, 9, 4, 2];
-//    let r = vec![0.04, 0.12, 0.24, 0.36, 0.16, 0.08];
-//    let f = vec![0.04, 0.16, 0.40, 0.76, 0.92, 1.0];
-//    let sample = Sample::build(n, &a);
-//    assert_eq!(n, sample.number_of_elements);
-//    assert_eq!(a, sample.absolute_frequency);
-//    assert_eq!(r, sample.relative_frequency);
-//    assert_eq!(f, sample.distribution_function);
-//}
-//
-//#[test]
-//#[should_panic(expected="Sum of sample units must equal number_of_elements")]
-//fn test_sample_build_panic() {
-//    let n = 25;
-//    let a = vec![1, 3, 6, 9, 4, 1];
-//    Sample::build(n, &a);
-//}
+#[test]
+fn test_get_length_1() {
+    let vec = vec![2, 3, 4];
+    assert_eq!(Ok(5.385164807134504), vec.get_length());
+}
+
+#[test]
+fn test_get_length_2() {
+    let vec = vec![2.7, 3.6, 4.5];
+    assert_eq!(Ok(6.363961030678928), vec.get_length());
+}
+
+#[test]
+fn test_get_length_3() {
+    let vec = vec![3, 4];
+    assert_eq!(Ok(5.0), vec.get_length());
+}
+
+#[test]
+fn test_get_length_4() {
+    let vec: Vec<i32> = vec![];
+    assert_eq!(Err("Vector is empty"), vec.get_length());
+}
