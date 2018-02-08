@@ -146,168 +146,147 @@ fn test_spherical_to_cartesic() {
 #[test]
 fn test_factorial() {
     let zero= 0;
-    assert_eq!(1, factorial(zero));
-    assert_eq!(1, factorial(zero));
+    assert_eq!(1, factorial(zero).unwrap());
+    assert_eq!(1, factorial(zero).unwrap());
 
 
-    assert_eq!(120, factorial(5_u8));
-    assert_eq!(40320, factorial(8_u16));
-    assert_eq!(479001600, factorial(12_u32));
-    assert_eq!(2432902008176640000, factorial(20_u64));
+    assert_eq!(120, factorial(5_u8).unwrap());
+    assert_eq!(40320, factorial(8_u16).unwrap());
+    assert_eq!(479001600, factorial(12_u32).unwrap());
+    assert_eq!(2432902008176640000, factorial(20_u64).unwrap());
 
-    assert_eq!(120, factorial(5_i8));
-    assert_eq!(5040, factorial(7_i16));
-    assert_eq!(479001600, factorial(12_i32));
-    assert_eq!(2432902008176640000, factorial(20_i64));
+    assert_eq!(120, factorial(5_i8).unwrap());
+    assert_eq!(5040, factorial(7_i16).unwrap());
+    assert_eq!(479001600, factorial(12_i32).unwrap());
+    assert_eq!(2432902008176640000, factorial(20_i64).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Value for facultation must be a positive integer!")]
 fn test_factorial_panic() {
-    factorial(-1);
+    assert_eq!(Err("Value for facultation must be a positive integer!"), factorial(-1));
 }
 
 #[test]
 fn test_permutation() {
-    assert_eq!(10, permutation(5_u8, vec![3_u8, 2_u8]));
-    assert_eq!(10, permutation(5_u16, vec![3_u16, 2_u16]));
-    assert_eq!(10, permutation(5_u32, vec![3_u32, 2_u32]));
-    assert_eq!(10, permutation(5_u64, vec![3_u64, 2_u64]));
+    assert_eq!(10, permutation(5_u8, vec![3_u8, 2_u8]).unwrap());
+    assert_eq!(10, permutation(5_u16, vec![3_u16, 2_u16]).unwrap());
+    assert_eq!(10, permutation(5_u32, vec![3_u32, 2_u32]).unwrap());
+    assert_eq!(10, permutation(5_u64, vec![3_u64, 2_u64]).unwrap());
 
-    assert_eq!(10, permutation(5_i8, vec![3_i8, 2_i8]));
-    assert_eq!(10, permutation(5_i16, vec![3_i16, 2_i16]));
-    assert_eq!(10, permutation(5_i32, vec![3_i32, 2_i32]));
-    assert_eq!(10, permutation(5_i64, vec![3_i64, 2_i64]));
+    assert_eq!(10, permutation(5_i8, vec![3_i8, 2_i8]).unwrap());
+    assert_eq!(10, permutation(5_i16, vec![3_i16, 2_i16]).unwrap());
+    assert_eq!(10, permutation(5_i32, vec![3_i32, 2_i32]).unwrap());
+    assert_eq!(10, permutation(5_i64, vec![3_i64, 2_i64]).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Sum of parts is not equal to whole")]
 fn test_permutation_panic_1() {
-    permutation(5, vec![3, 3]);
+    assert_eq!(Err("Sum of parts is not equal to whole"), permutation(5, vec![3, 3]));
 }
 
 #[test]
-#[should_panic(expected="Sum of parts is not equal to whole")]
 fn test_permutation_panic_2() {
-    permutation(5, vec![1, 3]);
+    assert_eq!(Err("Sum of parts is not equal to whole"), permutation(5, vec![1, 3]));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_permutation_panic_3() {
-    permutation(-1, vec![3, 2]);
+    assert_eq!(Err("Parameter n must be a positive integer!"), permutation(-1, vec![3, 2]));
 }
 
 #[test]
-#[should_panic(expected="Parameter karr is an empty vector!")]
 fn test_permutation_panic_4() {
-    permutation(5, vec![]);
+    assert_eq!(Err("Parameter karr is an empty vector!"), permutation(5, vec![]));
 }
 
 #[test]
 fn test_combination_1() {
-    assert_eq!(10, combination(5_u8, 3_u8));
-    assert_eq!(56, combination(8_u16, 5_u16));
-    assert_eq!(495, combination(12_u32, 8_u32));
-    assert_eq!(15504, combination(20_u64, 15_u64));
+    assert_eq!(10, combination(5_u8, 3_u8).unwrap());
+    assert_eq!(56, combination(8_u16, 5_u16).unwrap());
+    assert_eq!(495, combination(12_u32, 8_u32).unwrap());
+    assert_eq!(15504, combination(20_u64, 15_u64).unwrap());
 
-    assert_eq!(10, combination(5_i8, 2_i8));
-    assert_eq!(35, combination(7_i16, 3_i16));
-    assert_eq!(792, combination(12_i32, 7_i32));
-    assert_eq!(38760, combination(20_i64, 14_i64));
+    assert_eq!(10, combination(5_i8, 2_i8).unwrap());
+    assert_eq!(35, combination(7_i16, 3_i16).unwrap());
+    assert_eq!(792, combination(12_i32, 7_i32).unwrap());
+    assert_eq!(38760, combination(20_i64, 14_i64).unwrap());
 
-    assert_eq!(1, combination(10, 10));
+    assert_eq!(1, combination(10, 10).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Number of selections outgrows the number of elements")]
 fn test_combination_panic_1() {
-    combination(10, 11);
+    assert_eq!(Err("Number of selections outgrows the number of elements"), combination(10, 11));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_combination_panic_2() {
-    combination(-1, 2);
+    assert_eq!(Err("Parameter n must be a positive integer!"), combination(-1, 2));
 }
 
 #[test]
-#[should_panic(expected="Parameter k must be a positive integer!")]
 fn test_combination_panic_3() {
-    combination(2, -1);
+    assert_eq!(Err("Parameter k must be a positive integer!"), combination(2, -1));
 }
 
 #[test]
 fn test_combination_with_repetition() {
-    assert_eq!(220, combination_with_repetition(10, 3));
+    assert_eq!(220, combination_with_repetition(10, 3).unwrap());
 }
 
 #[test]
 fn test_combination_with_repetition_2() {
-    assert_eq!(35, combination_with_repetition(4, 4));
+    assert_eq!(35, combination_with_repetition(4, 4).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_combination_with_repetition_panic_1() {
-    combination(-1, 2);
+    assert_eq!(Err("Parameter n must be a positive integer!"), combination_with_repetition(-1, 2));
 }
 
 #[test]
-#[should_panic(expected="Parameter k must be a positive integer!")]
 fn test_combination_with_repetition_panic_2() {
-    combination(2, -1);
+    assert_eq!(Err("Parameter k must be a positive integer!"), combination_with_repetition(2, -1));
 }
 
 #[test]
 fn test_variation_1() {
-    assert_eq!(336, variation(8, 3));
+    assert_eq!(336, variation(8, 3).unwrap());
 }
 
 #[test]
 fn test_variation_2() {
-    assert_eq!(40320, variation(8, 8));
+    assert_eq!(40320, variation(8, 8).unwrap());
 }
-//#[test]
-//fn test_exponential_density() {
-//    assert_eq!(0.0, exponential_density(2.0, -1.0));
-//    assert_eq!(2.0, exponential_density(2.0, 0.0));
-//    assert_eq!(0.2706705664732254, exponential_density(2.0, 1.0));
-//    assert_eq!(0.03663127777746837, exponential_density(2.0, 2.0));
-//}
+
 #[test]
-#[should_panic(expected="Number of selections outgrows the number of elements")]
 fn test_variation_panic() {
-    variation(8, 9);
+    assert_eq!(Err("Number of selections outgrows the number of elements"), variation(8, 9));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_variation_panic_2() {
-    combination(-1, 2);
+    assert_eq!(Err("Parameter n must be a positive integer!"), variation(-1, 2));
 }
 
 #[test]
-#[should_panic(expected="Parameter k must be a positive integer!")]
 fn test_variation_panic_3() {
-    combination(2, -1);
+    assert_eq!(Err("Parameter k must be a positive integer!"), variation(2, -1));
 }
 
 #[test]
 fn test_variation_with_repetition() {
-    assert_eq!(125, variation_with_repetition(5, 3));
+    assert_eq!(125, variation_with_repetition(5, 3).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_variation_with_repetition_panic_1() {
-    combination(-1, 2);
+    assert_eq!(Err("Parameter n must be a positive integer!"), variation_with_repetition(-1, 2));
 }
 
 #[test]
-#[should_panic(expected="Parameter k must be a positive integer!")]
 fn test_variation_with_repetition_panic_2() {
-    combination(2, -1);
+    assert_eq!(Err("Parameter k must be a positive integer!"), variation_with_repetition(2, -1));
 }
 
 #[test]
@@ -320,40 +299,24 @@ fn test_binomial_distribution() {
     vec.push(0.0012150000000000004);
     vec.push(0.00005400000000000002);
     vec.push(0.0000010000000000000004);
-    assert_eq!(vec, binomial_distribution(6_i32, 0.1));
+    assert_eq!(vec, binomial_distribution(6_i32, 0.1).unwrap());
 }
 
 #[test]
-#[should_panic(expected="p must be in a range between 0 and 1!")]
 fn test_binomial_panic_1() {
-    binomial_distribution(6, -0.1);
+    assert_eq!(Err("p must be in a range between 0 and 1!"), binomial_distribution(6, -0.1));
 }
 
 #[test]
-#[should_panic(expected="p must be in a range between 0 and 1!")]
 fn test_binomial_panic_2() {
-    binomial_distribution(6, 1.1);
+    assert_eq!(Err("p must be in a range between 0 and 1!"), binomial_distribution(6, 1.1));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_binomial_panic_3() {
-    binomial_distribution(0, 0.5);
+    assert_eq!(Err("Parameter n must be a positive integer!"), binomial_distribution(0, 0.5));
 }
 
-//#[test]
-//fn test_convert() {
-//    assert_eq!(1.0, convert(1_i8));
-//    assert_eq!(1.0, convert(1_i16));
-//    assert_eq!(1.0, convert(1_i32));
-//    assert_eq!(1.0, convert(1_i64));
-//
-//    assert_eq!(1.0, convert(1_u8));
-//    assert_eq!(1.0, convert(1_u16));
-//    assert_eq!(1.0, convert(1_u32));
-//    assert_eq!(1.0, convert(1_u64));
-//}
-//
 #[test]
 fn test_hypergeometric_distribution() {
     let mut vec = vec![];
@@ -362,72 +325,64 @@ fn test_hypergeometric_distribution() {
     vec.push(0.42424242424242425);
     vec.push(0.35353535353535354);
     vec.push(0.0707070707070707);
-    assert_eq!(vec, hypergeometric_distribution(12, 7, 4));
+    assert_eq!(vec, hypergeometric_distribution(12, 7, 4).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter M must be smaller than N!")]
 fn test_hypergeometric_panic_1() {
-    hypergeometric_distribution(7, 12, 4);
+    assert_eq!(Err("Parameter M must be smaller than N!"), hypergeometric_distribution(7, 12, 4));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be smaller than N!")]
 fn test_hypergeometric_panic_2() {
-    hypergeometric_distribution(12, 7, 14);
+    assert_eq!(Err("Parameter n must be smaller than N!"), hypergeometric_distribution(12, 7, 14));
 }
 
 #[test]
-#[should_panic(expected="Parameter N must be a positive integer!")]
 fn test_hypergeometric_panic_3() {
-    hypergeometric_distribution(0, 7, 14);
+    assert_eq!(Err("Parameter N must be a positive integer!"), hypergeometric_distribution(0, 7, 14));
 }
 
 #[test]
-#[should_panic(expected="Parameter M must be a positive integer!")]
 fn test_hypergeometric_panic_4() {
-    hypergeometric_distribution(12, 0, 14);
+    assert_eq!(Err("Parameter M must be a positive integer!"), hypergeometric_distribution(12, 0, 14));
 }
 
 #[test]
-#[should_panic(expected="Parameter n must be a positive integer!")]
 fn test_hypergeometric_panic_5() {
-    hypergeometric_distribution(12, 7, 0);
+    assert_eq!(Err("Parameter n must be a positive integer!"), hypergeometric_distribution(12, 7, 0));
 }
 
 #[test]
 fn test_poisson_distribution() {
     let my = 1;
-    assert_eq!(0.36787944117144233, poisson_distribution(my, 0));
-    assert_eq!(0.36787944117144233, poisson_distribution(my, 1));
-    assert_eq!(0.18393972058572117, poisson_distribution(my, 2));
-    assert_eq!(0.061313240195240384, poisson_distribution(my, 3));
-    assert_eq!(0.015328310048810096, poisson_distribution(my, 4));
+    assert_eq!(0.36787944117144233, poisson_distribution(my, 0).unwrap());
+    assert_eq!(0.36787944117144233, poisson_distribution(my, 1).unwrap());
+    assert_eq!(0.18393972058572117, poisson_distribution(my, 2).unwrap());
+    assert_eq!(0.061313240195240384, poisson_distribution(my, 3).unwrap());
+    assert_eq!(0.015328310048810096, poisson_distribution(my, 4).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter µ must be positive!")]
 fn test_poisson_panic_1() {
-    poisson_distribution(-1, 0);
+    assert_eq!(Err("Parameter µ must be positive!"), poisson_distribution(-1, 0));
 }
 
 #[test]
-#[should_panic(expected="Parameter x must be a positive integer!")]
 fn test_poisson_panic_2() {
-    poisson_distribution(5, -1);
+    assert_eq!(Err("Parameter x must be a positive integer!"), poisson_distribution(5, -1));
 }
 
 #[test]
 fn test_gaussian_distribution() {
-    assert_eq!(0.10648266850745075, gaussian_distribution(2.0, 3.0, 4.0));
-    assert_eq!(0.10648266850745075, gaussian_distribution(2, 3, 4));
-    assert_eq!(0.017996988837729353, gaussian_distribution(2, 3, -4));
+    assert_eq!(0.10648266850745075, gaussian_distribution(2.0, 3.0, 4.0).unwrap());
+    assert_eq!(0.10648266850745075, gaussian_distribution(2, 3, 4).unwrap());
+    assert_eq!(0.017996988837729353, gaussian_distribution(2, 3, -4).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter \u{03c3} must be bigger than 0!")]
 fn test_gaussian_panic() {
-    gaussian_distribution(2, -1, 4);
+    assert_eq!(Err("Parameter \u{03c3} must be bigger than 0!"), gaussian_distribution(2, -1, 4));
 }
 
 #[test]
@@ -443,16 +398,15 @@ fn test_standard_distribution() {
 
 #[test]
 fn test_exponential_density() {
-    assert_eq!(0.0, exponential_distribution(2.0, -1.0));
-    assert_eq!(2.0, exponential_distribution(2.0, 0.0));
-    assert_eq!(0.2706705664732254, exponential_distribution(2.0, 1.0));
-    assert_eq!(0.03663127777746836, exponential_distribution(2.0, 2.0));
+    assert_eq!(0.0, exponential_distribution(2.0, -1.0).unwrap());
+    assert_eq!(2.0, exponential_distribution(2.0, 0.0).unwrap());
+    assert_eq!(0.2706705664732254, exponential_distribution(2.0, 1.0).unwrap());
+    assert_eq!(0.03663127777746836, exponential_distribution(2.0, 2.0).unwrap());
 }
 
 #[test]
-#[should_panic(expected="Parameter \u{03bb} must be bigger than 0!")]
 fn test_exponential_panic() {
-    exponential_distribution(-1, 0);
+    assert_eq!(Err("Parameter \u{03bb} must be bigger than 0!"), exponential_distribution(-1, 0));
 }
 
 //#[test]
