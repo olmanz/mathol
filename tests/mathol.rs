@@ -7,7 +7,7 @@ use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, po
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
-use mathol::vectoroperations::Vectoroperations;
+use mathol::vectoroperations::{Vector, Vectoroperations};
 
 #[test]
 fn test_pow() {
@@ -584,24 +584,74 @@ fn test_get_span_3() {
 
 #[test]
 fn test_get_length_1() {
-    let vec = vec![2, 3, 4];
-    assert_eq!(Ok(5.385164807134504), vec.get_length());
+    let vec = Vector {x: 2, y: 3, z: 4};
+    assert_eq!(5.385164807134504, vec.get_length());
 }
 
 #[test]
 fn test_get_length_2() {
-    let vec = vec![2.7, 3.6, 4.5];
-    assert_eq!(Ok(6.363961030678928), vec.get_length());
+    let vec = Vector {x: 2.7, y: 3.6, z: 4.5};
+    assert_eq!(6.363961030678928, vec.get_length());
 }
 
 #[test]
-fn test_get_length_3() {
-    let vec = vec![3, 4];
-    assert_eq!(Ok(5.0), vec.get_length());
+fn test_get_direction_angle() {
+    let vec = Vector {x: 4, y: -2, z: 5};
+    assert_eq!(0.9319311825594854, vec.get_direction_angle().0);
+    assert_eq!(1.873542278417901, vec.get_direction_angle().1);
+    assert_eq!(0.7297276562269663, vec.get_direction_angle().2);
 }
 
 #[test]
-fn test_get_length_4() {
-    let vec: Vec<i32> = vec![];
-    assert_eq!(Err("Vector is empty"), vec.get_length());
+fn test_multiply_with_scalar_1() {
+    let vec = Vector {x: 2, y: 3, z: 4};
+    assert_eq!(4, vec.multiply_with_scalar(2).x);
+    assert_eq!(6, vec.multiply_with_scalar(2).y);
+    assert_eq!(8, vec.multiply_with_scalar(2).z);
+}
+
+#[test]
+fn test_multiply_with_scalar_2() {
+    let vec = Vector {x: 2.7, y: 3.6, z: 4.5};
+    assert_eq!(5.4, vec.multiply_with_scalar(2.0).x);
+    assert_eq!(7.2, vec.multiply_with_scalar(2.0).y);
+    assert_eq!(9.0, vec.multiply_with_scalar(2.0).z);
+}
+
+#[test]
+fn test_get_scalar_product_1() {
+    let a = Vector {x: 2, y: 3, z: 4};
+    let b = Vector {x: 5, y: 6, z: 7};
+    assert_eq!(56, a.get_scalar_product(&b));
+}
+
+#[test]
+fn test_get_scalar_product_2() {
+    let a = Vector {x: 2.7, y: 3.6, z: 4.5};
+    let b = Vector {x: 5.4, y: 6.3, z: 7.2};
+    assert_eq!(69.66, a.get_scalar_product(&b));
+}
+
+#[test]
+fn get_cut_angle_1() {
+    let a = Vector {x: 1, y: 2, z: -3};
+    let b = Vector {x: 5, y: -1, z: -5};
+    assert_eq!(0.6736330697086078, a.get_cut_angle(&b));
+}
+
+#[test]
+fn get_vector_product() {
+    let a = Vector {x: 1, y: 4, z: 0};
+    let b = Vector {x: -2, y: 5, z: 3};
+    assert_eq!(12, a.get_vector_product(&b).x);
+    assert_eq!(-3, a.get_vector_product(&b).y);
+    assert_eq!(13, a.get_vector_product(&b).z);
+}
+
+#[test]
+fn get_triple_product() {
+    let a = Vector {x: 1, y: -2, z: 4};
+    let b = Vector {x: 4, y: 1, z: 2};
+    let c = Vector {x: -2, y: -5, z: 6};
+    assert_eq!(0, a.get_triple_product(&b, &c))
 }
