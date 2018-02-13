@@ -7,7 +7,7 @@ use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, po
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
-use mathol::vectoroperations::{Vector, Vectoroperations};
+use mathol::vectoroperations::{Vector, Vectoroperations, Line, Plane};
 
 #[test]
 fn test_pow() {
@@ -633,14 +633,14 @@ fn test_get_scalar_product_2() {
 }
 
 #[test]
-fn get_cut_angle_1() {
+fn test_get_cut_angle_1() {
     let a = Vector {x: 1, y: 2, z: -3};
     let b = Vector {x: 5, y: -1, z: -5};
     assert_eq!(0.6736330697086078, a.get_cut_angle(&b));
 }
 
 #[test]
-fn get_vector_product() {
+fn test_get_vector_product() {
     let a = Vector {x: 1, y: 4, z: 0};
     let b = Vector {x: -2, y: 5, z: 3};
     assert_eq!(12, a.get_vector_product(&b).x);
@@ -649,9 +649,127 @@ fn get_vector_product() {
 }
 
 #[test]
-fn get_triple_product() {
+fn test_get_triple_product() {
     let a = Vector {x: 1, y: -2, z: 4};
     let b = Vector {x: 4, y: 1, z: 2};
     let c = Vector {x: -2, y: -5, z: 6};
     assert_eq!(0, a.get_triple_product(&b, &c))
+}
+
+#[test]
+fn test_distance_from_point() {
+    let p = Vector {x: 1, y: 5, z: 3};
+    let l = Line {r: Vector {x: 1, y: 1, z: 4}, a: Vector {x: 2, y: -3, z: 5}};
+    assert_eq!(3.0650834967591445, l.distance_from_point(&p));
+}
+
+#[test]
+fn test_are_parallel() {
+    let l1 = Line {r: Vector {x: 1, y: 0, z: 5}, a: Vector {x: 2, y: 1, z: 1}};
+    let l2 = Line {r: Vector {x: 0, y: 2, z: 1}, a: Vector {x: 2, y: 1, z: 1}};
+    assert_eq!(true, l1.are_parallel(&l2));
+}
+
+#[test]
+fn test_distance_from_line_1() {
+    let l1 = Line {r: Vector {x: 1, y: 0, z: 5}, a: Vector {x: 2, y: 1, z: 1}};
+    let l2 = Line {r: Vector {x: 0, y: 2, z: 1}, a: Vector {x: 2, y: 1, z: 1}};
+    assert_eq!(Ok(4.281744192888377), l1.distance_from_line(&l2));
+}
+
+#[test]
+fn test_distance_from_line_2() {
+    let l1 = Line {r: Vector {x: 5, y: 2, z: 1}, a: Vector {x: 1, y: 1, z: 3}};
+    let l2 = Line {r: Vector {x: 2, y: -1, z: 0}, a: Vector {x: 3, y: 2, z: 1}};
+    assert_eq!(Ok(0.8432740427115678), l1.distance_from_line(&l2));
+}
+
+#[test]
+fn test_distance_from_line_3() {
+    let l1 = Line {r: Vector {x: 1, y: 1, z: 0}, a: Vector {x: 2, y: 1, z: 1}};
+    let l2 = Line {r: Vector {x: 2, y: 0, z: 2}, a: Vector {x: 1, y: -1, z: 2}};
+    assert_eq!(Err("Lines do cross"), l1.distance_from_line(&l2));
+}
+
+#[test]
+fn test_do_cross() {
+    let l1 = Line {r: Vector {x: 1, y: 1, z: 0}, a: Vector {x: 2, y: 1, z: 1}};
+    let l2 = Line {r: Vector {x: 2, y: 0, z: 2}, a: Vector {x: 1, y: -1, z: 2}};
+    assert_eq!(true, l1.do_cross(&l2));
+}
+
+#[test]
+fn test_are_askew() {
+    let l1 = Line {r: Vector {x: 5, y: 2, z: 1}, a: Vector {x: 1, y: 1, z: 3}};
+    let l2 = Line {r: Vector {x: 2, y: -1, z: 0}, a: Vector {x: 3, y: 2, z: 1}};
+    assert_eq!(true, l1.are_askew(&l2));
+}
+
+#[test]
+fn build_plane_from_three_points() {
+    let p = Vector {x: 1, y: 1, z: 2};
+    let q = Vector {x: 0, y: 4, z: -5};
+    let r = Vector {x: -3, y: 4, z: 9};
+    let vec = Plane::build_plane_from_three_points(&p, &q, &r);
+    assert_eq!(1, vec.r.x);
+    assert_eq!(1, vec.r.y);
+    assert_eq!(2, vec.r.z);
+    assert_eq!(-1, vec.a.x);
+    assert_eq!(3, vec.a.y);
+    assert_eq!(-7, vec.a.z);
+    assert_eq!(-4, vec.b.x);
+    assert_eq!(3, vec.b.y);
+    assert_eq!(7, vec.b.z);
+}
+
+#[test]
+fn test_get_distance_from_point() {
+    let r = Vector {x: 3.0, y: 1.0, z: 8.0};
+    let a = Vector {x: -2.0, y: 2.0, z: 1.0};
+    let b = Vector {x: 4.5, y: 3.0, z: 1.0};
+    let q = Vector {x: 1.0, y: 2.0, z: 0.0};
+    let plane = Plane {r, a, b};
+    assert_eq!(7.845728264713728, plane.get_distance_from_point(&q));
+}
+
+#[test]
+fn test_is_plane_parallel_to_line() {
+    let l = Line {r: Vector {x: 1, y: 2, z: 3}, a: Vector {x: 4, y: 2, z: 2}};
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    assert_eq!(true, p.is_parallel_to_line(&l));
+}
+
+#[test]
+fn test_get_distance_of_plane_to_line() {
+    let l = Line {r: Vector {x: 1, y: 2, z: 3}, a: Vector {x: 4, y: 2, z: 2}};
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    assert_eq!(Ok(0.46188021535170054), p.get_distance_from_line(&l));
+}
+
+#[test]
+fn test_get_distance_of_plane_to_line_panic() {
+    let l = Line {r: Vector {x: 1, y: 2, z: 3}, a: Vector {x: 4, y: 2, z: 3}};
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    assert_eq!(Err("Line is not parallel to plane"), p.get_distance_from_line(&l));
+}
+
+#[test]
+fn test_is_plane_parallel_to_plane() {
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    let q = Plane {r: Vector {x: 4, y: 3, z: 7}, a: Vector {x: 4, y: 2, z: 2}, b: Vector {x: 2, y: 6, z: 8}};
+    assert_eq!(true, p.is_parallel_to_plane(&q));
+}
+
+#[test]
+fn test_get_distance_of_plane_to_plane() {
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    let q = Plane {r: Vector {x: 4, y: 3, z: 7}, a: Vector {x: 4, y: 2, z: 2}, b: Vector {x: 2, y: 6, z: 8}};
+    assert_eq!(Ok(1.3856406460551016), p.get_distance_from_plane(&q));
+}
+
+#[test]
+fn test_get_distance_of_plane_to_plane_panic() {
+    let p = Plane {r: Vector {x: 2, y: 3, z: 5}, a: Vector {x: 2, y: 1, z: 1}, b: Vector {x: 1, y: 3, z: 4}};
+    let q = Plane {r: Vector {x: 4, y: 3, z: 7}, a: Vector {x: 4, y: 2, z: 3}, b: Vector {x: 2, y: 6, z: 8}};
+    assert_eq!(Err("The planes are not parallel"), p.get_distance_from_plane(&q));
 }
