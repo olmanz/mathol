@@ -1,4 +1,5 @@
 extern crate mathol;
+//use num::Num;
 use mathol::basic::{Point, pow};
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
@@ -11,6 +12,7 @@ use mathol::vectoroperations::vector2d::Vector2D;
 use mathol::vectoroperations::vector3d::Vector3D;
 use mathol::vectoroperations::line3d::Line3D;
 use mathol::vectoroperations::plane::Plane;
+use mathol::matrices::Matrice;
 
 #[test]
 fn test_pow() {
@@ -850,4 +852,48 @@ fn test_get_cut_angle_vector2d_2() {
     let vec_1 = Vector2D::build_vector(4, 3);
     let vec_2 = Vector2D::build_vector(-3, 2);
     assert_eq!(1.9100889412489412, vec_1.get_cut_angle(&vec_2));
+}
+
+#[test]
+fn test_build_empty_matrice() {
+    let matrice = Matrice::build_empty_matrice(3, 3);
+    let vec = vec![0, 0, 0, 0, 0, 0, 0, 0, 0];
+    assert_eq!(vec, matrice.data);
+}
+
+#[test]
+fn test_build_matrice() {
+    let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
+    assert_eq!(vec![1, 2, 3, 4, 5, 6, 7, 8, 9], matrice.data);
+}
+
+#[test]
+fn test_build_matrice_panic_1() {
+    assert_eq!(Err("Vector is not the same length as the product of rows and columns"), Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8]));
+}
+
+#[test]
+fn test_build_matrice_panic_2() {
+    assert_eq!(Err("Vector is not the same length as the product of rows and columns"), Matrice::build_matrice(3, 3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
+}
+
+#[test]
+fn test_get_element() {
+    let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
+    assert_eq!(Ok(1), matrice.get_element(0, 0));
+    assert_eq!(Ok(2), matrice.get_element(0, 1));
+    assert_eq!(Ok(3), matrice.get_element(0, 2));
+    assert_eq!(Ok(4), matrice.get_element(1, 0));
+    assert_eq!(Ok(5), matrice.get_element(1, 1));
+    assert_eq!(Ok(6), matrice.get_element(1, 2));
+    assert_eq!(Ok(7), matrice.get_element(2, 0));
+    assert_eq!(Ok(8), matrice.get_element(2, 1));
+    assert_eq!(Ok(9), matrice.get_element(2, 2));
+}
+
+#[test]
+fn test_get_element_panic() {
+    let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
+    assert_eq!(Err("Row is out of bounds"), matrice.get_element(3, 2));
+    assert_eq!(Err("Column is out of bounds"), matrice.get_element(2, 3));
 }

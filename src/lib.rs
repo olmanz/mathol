@@ -6,3 +6,4 @@ pub mod coordinatesystems;
 pub mod stochastics;
 pub mod statistics;
 pub mod vectoroperations;
+pub mod matrices;
