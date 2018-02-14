@@ -1,5 +1,4 @@
-extern crate num;
-use self::num::{Num, FromPrimitive};
+use num::{Num, FromPrimitive};
 use basic::{Convert, pow};
 use std::f64;
 

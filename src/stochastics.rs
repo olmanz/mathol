@@ -1,5 +1,4 @@
-extern crate num;
-use self::num::{PrimInt, Integer, Float, Zero, One};
+use num::{PrimInt, Integer, Float, Zero, One, range};
 use std::iter::{Sum, Product};
 use std::ops::{Sub, Mul};
 use std::iter::Iterator;
@@ -24,7 +23,7 @@ pub fn factorial<T>(n: T) -> Result<T, &'static str>
         return Err("Value for facultation must be a positive integer!");
     }
 
-    Ok(num::range(T::one(), n + T::one()).product())
+    Ok(range(T::one(), n + T::one()).product())
 }
 
 /// Calculates the number of possibilities the elements of a given multiset (a set containing smaller sets) can be arranged in a specific order.
@@ -199,7 +198,7 @@ pub fn binomial_distribution<T, U>(n: T, p: U) -> Result<Vec<f64>, &'static str>
 
     let q = U::one() - p;
 
-    let binomial = num::range(T::zero(), n + T::one()).fold(Vec::new(), |mut vec, x| {
+    let binomial = range(T::zero(), n + T::one()).fold(Vec::new(), |mut vec, x| {
         let a = factorial(n).unwrap() / (factorial(x).unwrap() * factorial(n - x).unwrap());
         let b = pow(p, x);
         let c = pow(q, n - x);
@@ -252,7 +251,7 @@ pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Result<Vec<f64>, &'st
         return Err("Parameter n must be smaller than N!")
     }
 
-    let hypergeometric = num::range(T::zero(), n + T::one()).fold(Vec::new(), |mut vec, x| {
+    let hypergeometric = range(T::zero(), n + T::one()).fold(Vec::new(), |mut vec, x| {
         let a = combination(M, x).unwrap();
         let b = combination(N - M, n - x).unwrap();
         let c = combination(N, n).unwrap();

@@ -1,5 +1,4 @@
-extern crate num;
-use self::num::{Num};
+use num::Num;
 
 pub struct Point {
     pub x: f64,
