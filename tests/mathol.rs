@@ -7,7 +7,7 @@ use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, po
 use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
-use mathol::vectoroperations::vectortraits::Vectoroperations;
+use mathol::vectoroperations::vector2d::Vector2D;
 use mathol::vectoroperations::vector3d::Vector3D;
 use mathol::vectoroperations::line3d::Line3D;
 use mathol::vectoroperations::plane::Plane;
@@ -656,7 +656,20 @@ fn test_get_triple_product() {
     let a = Vector3D {x: 1, y: -2, z: 4};
     let b = Vector3D {x: 4, y: 1, z: 2};
     let c = Vector3D {x: -2, y: -5, z: 6};
-    assert_eq!(0, a.get_triple_product(&b, &c))
+    assert_eq!(0, a.get_triple_product(&b, &c));
+}
+
+#[test]
+fn test_build_line_from_two_points() {
+    let p = Vector3D::build_vector(-1, 5, 0);
+    let q = Vector3D::build_vector(1, -3, 2);
+    let line = Line3D::build_line_from_two_points(&p, &q);
+    assert_eq!(-1, line.r.x);
+    assert_eq!(5, line.r.y);
+    assert_eq!(0, line.r.z);
+    assert_eq!(2, line.a.x);
+    assert_eq!(-8, line.a.y);
+    assert_eq!(2, line.a.z);
 }
 
 #[test]
@@ -702,10 +715,10 @@ fn test_do_cross() {
 }
 
 #[test]
-fn test_are_askew() {
+fn test_are_skew() {
     let l1 = Line3D {r: Vector3D {x: 5, y: 2, z: 1}, a: Vector3D {x: 1, y: 1, z: 3}};
     let l2 = Line3D {r: Vector3D {x: 2, y: -1, z: 0}, a: Vector3D {x: 3, y: 2, z: 1}};
-    assert_eq!(true, l1.are_askew(&l2));
+    assert_eq!(true, l1.are_skew(&l2));
 }
 
 #[test]
@@ -775,4 +788,66 @@ fn test_get_distance_of_plane_to_plane_panic() {
     let p = Plane {r: Vector3D {x: 2, y: 3, z: 5}, a: Vector3D {x: 2, y: 1, z: 1}, b: Vector3D {x: 1, y: 3, z: 4}};
     let q = Plane {r: Vector3D {x: 4, y: 3, z: 7}, a: Vector3D {x: 4, y: 2, z: 3}, b: Vector3D {x: 2, y: 6, z: 8}};
     assert_eq!(Err("The planes are not parallel"), p.get_distance_from_plane(&q));
+}
+
+#[test]
+fn test_add_vector2d() {
+    let vec_1 = Vector2D::build_vector(1,2);
+    let vec_2 = Vector2D::build_vector(3,4);
+    let vec_3 = vec_1.add_vector(&vec_2);
+    assert_eq!(4, vec_3.x);
+    assert_eq!(6, vec_3.y);
+}
+
+#[test]
+fn test_sub_vector2d() {
+    let vec_1 = Vector2D::build_vector(1,2);
+    let vec_2 = Vector2D::build_vector(3,4);
+    let vec_3 = vec_1.sub_vector(&vec_2);
+    assert_eq!(-2, vec_3.x);
+    assert_eq!(-2, vec_3.y);
+}
+
+#[test]
+fn test_get_length_vector2d() {
+    let vec = Vector2D::build_vector(6,8);
+    assert_eq!(10.0, vec.get_length());
+}
+
+#[test]
+fn test_multiply_with_scalar_vector2d() {
+    let vec = Vector2D::build_vector(4, -3);
+    let res = vec.multiply_with_scalar(6);
+    assert_eq!(24, res.x);
+    assert_eq!(-18, res.y);
+}
+
+#[test]
+fn test_get_scalar_product_2d_1() {
+    let vec_1 = Vector2D::build_vector(3, 2);
+    let vec_2 = Vector2D::build_vector(-1, 5);
+    assert_eq!(7, vec_1.get_scalar_product(&vec_2));
+}
+
+#[test]
+fn test_get_scalar_product_2d_2() {
+    let vec_1 = Vector2D::build_vector(1, 1);
+    let vec_2 = Vector2D::build_vector(-1, 1);
+    assert_eq!(0, vec_1.get_scalar_product(&vec_2));
+}
+
+#[test]
+fn test_get_cut_angle_vector2d_1() {
+    let vec_1 = Vector2D::build_vector(2, 1);
+    let vec_2 = Vector2D::build_vector(1, 0);
+    let vec_3 = Vector2D::build_vector(0, 1);
+    assert_eq!(0.46364760900080615, vec_1.get_cut_angle(&vec_2));
+    assert_eq!(1.1071487177940904, vec_1.get_cut_angle(&vec_3));
+}
+
+#[test]
+fn test_get_cut_angle_vector2d_2() {
+    let vec_1 = Vector2D::build_vector(4, 3);
+    let vec_2 = Vector2D::build_vector(-3, 2);
+    assert_eq!(1.9100889412489412, vec_1.get_cut_angle(&vec_2));
 }
