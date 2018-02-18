@@ -1,15 +1,11 @@
 use std::f64::consts::PI;
-use basic::{Amount, Convert, pow};
+use basic::{Amount, Convert, Cotangent, pow};
 use std::ops::Add;
 use std::cmp::PartialOrd;
 use std::fmt::Debug;
 use vectoroperations::vector2d::Vector2D;
 use num::Num;
-
-pub trait Planimetry {
-    fn get_area(&self) -> f64;
-    fn get_perimeter(&self) -> f64;
-}
+use geometrics::traits::{Area, Perimeter, Height, Diagonal};
 
 #[allow(non_snake_case)]
 pub struct Triangle {
@@ -55,10 +51,6 @@ impl Triangle
         (alpha.to_degrees(), beta.to_degrees(), gamma.to_degrees())
     }
 
-    pub fn get_height(&self) -> f64 {
-        self.a * self.get_angles().1.to_radians().sin()
-    }
-
     pub fn get_inner_circle(&self) -> Circle {
         let s = self.get_perimeter() / 2.0;
         let r = ((s - self.a) * (s - self.b) * (s - self.c) / s).sqrt();
@@ -73,17 +65,25 @@ impl Triangle
     }
 }
 
-impl Planimetry for Triangle
-{
+impl Area for Triangle {
     fn get_area(&self) -> f64 {
         let s = self.get_perimeter() / 2.0;
         (s * (s - self.a) * (s - self.b) * (s - self.c)).sqrt()
     }
+}
 
+impl Perimeter for Triangle {
     fn get_perimeter(&self) -> f64 {
         self.a + self.b + self.c
     }
 }
+
+impl Height for Triangle {
+    fn get_height(&self) -> f64 {
+        self.a * self.get_angles().1.to_radians().sin()
+    }
+}
+
 
 pub struct Rectangle {
     pub a: f64,
@@ -99,21 +99,26 @@ impl Rectangle {
             b: b.to_f64(),
         }
     }
-
-    pub fn get_diagonal(&self) -> f64 {
-        ((pow(self.a, 2)) + pow(self.b, 2)).sqrt()
-    }
 }
 
-impl Planimetry for Rectangle {
+impl Area for Rectangle {
     fn get_area(&self) -> f64 {
         self.a * self.b
     }
+}
 
+impl Perimeter for Rectangle {
     fn get_perimeter(&self) -> f64 {
         2.0 * self.a + 2.0 * self.b
     }
 }
+
+impl Diagonal for Rectangle {
+    fn get_diagonal(&self) -> f64 {
+        ((pow(self.a, 2)) + pow(self.b, 2)).sqrt()
+    }
+}
+
 
 pub struct Parallelogram {
     pub a: f64,
@@ -131,26 +136,20 @@ impl Parallelogram {
             h: h.to_f64(),
         }
     }
-
-    pub fn get_diagonals(&self) -> (f64, f64) {
-        let d1 = (pow(self.a, 2) + pow(self.b, 2) + 2.0 * self.a *
-            (pow(self.b, 2) - pow(self.h, 2)).sqrt()).sqrt();
-        let d2 = (pow(self.a, 2) + pow(self.b, 2) - 2.0 * self.a *
-            (pow(self.b, 2) - pow(self.h, 2)).sqrt()).sqrt();
-
-        (d1, d2)
-    }
 }
 
-impl Planimetry for Parallelogram {
+impl Area for Parallelogram {
     fn get_area(&self) -> f64 {
         self.a * self.h
     }
+}
 
+impl Perimeter for Parallelogram {
     fn get_perimeter(&self) -> f64 {
         2.0 * self.a + 2.0 * self.b
     }
 }
+
 
 pub struct Trapeze {
     pub a: f64,
@@ -170,23 +169,63 @@ impl Trapeze {
             d: d.to_f64(),
         }
     }
+}
 
-    pub fn get_height(&self) -> f64 {
+impl Area for Trapeze {
+    fn get_area(&self) -> f64 {
+        0.5 * (self.a + self.b) * self.get_height()
+    }
+}
+
+impl Perimeter for Trapeze {
+    fn get_perimeter(&self) ->f64 {
+        self.a + self.b + self.c + self.d
+    }
+}
+
+impl Height for Trapeze {
+    fn get_height(&self) -> f64 {
         ((self.a + self.d - self.b + self.c) * (-self.a + self.d + self.b + self.c) *
             (-self.a - self.d + self.b + self.c) * (-self.a + self.d + self.b - self.c)).sqrt() /
             (2.0 * (self.a - self.b))
     }
 }
 
-impl Planimetry for Trapeze {
-    fn get_area(&self) -> f64 {
-        0.5 * (self.a + self.b) * self.get_height()
+
+pub struct Polygon {
+    pub a: f64,
+    pub n: f64,
+}
+
+impl Polygon {
+    pub fn build_polygon<T>(a: T, n: T) -> Polygon
+        where T: Num + Convert
+    {
+        Polygon {
+            a: a.to_f64(),
+            n: n.to_f64(),
+        }
     }
 
-    fn get_perimeter(&self) ->f64 {
-        self.a + self.b + self.c + self.d
+    pub fn get_radius(&self) -> f64 {
+        let basis_area = self.get_area();
+        let m = 0.5 * (16.0 * pow(basis_area / self.n.to_f64(), 2) / pow(self.a, 2) + pow(self.a, 2)).sqrt();
+        m
     }
 }
+
+impl Area for Polygon {
+    fn get_area(&self) -> f64 {
+        0.25 * self.n * pow(self.a, 2) * (PI / self.n).cot()
+    }
+}
+
+impl Perimeter for Polygon {
+    fn get_perimeter(&self) -> f64 {
+        self.a * self.n
+    }
+}
+
 
 pub struct Circle {
     pub r: f64,
@@ -202,15 +241,18 @@ impl Circle {
     }
 }
 
-impl Planimetry for Circle {
+impl Area for Circle {
     fn get_area(&self) -> f64 {
         PI * self.r * self.r
     }
+}
 
+impl Perimeter for Circle {
     fn get_perimeter(&self) -> f64 {
         2.0 * PI * self.r
     }
 }
+
 
 pub struct Ellipsis {
     pub a: f64,
@@ -228,13 +270,14 @@ impl Ellipsis {
     }
 }
 
-impl Planimetry for Ellipsis {
+impl Area for Ellipsis {
     fn get_area(&self) -> f64 {
         PI * self.a * self.b
     }
+}
 
+impl Perimeter for Ellipsis {
     fn get_perimeter(&self) -> f64 {
         PI * (1.5 * (self.a + self.b) - (self.a * self.b).sqrt())
     }
 }
-
