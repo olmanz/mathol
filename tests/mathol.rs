@@ -3,14 +3,14 @@ use mathol::basic::pow;
 use mathol::geometrics::planimetry::{Triangle, Rectangle, Parallelogram, Trapeze, Circle, Ellipsis};
 use mathol::geometrics::stereometry::{Cuboid, Pyramid, Wedge, Cylinder, Cone, Sphere, Ellipsoid, SphericBarrel, ParabolicBarrel, Torus};
 use mathol::geometrics::traits::*;
-use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
+//use mathol::coordinatesystems::{Cartesic3D, Cylindrical, Spherical};
 use mathol::stochastics::probability::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::distribution::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
 use mathol::stochastics::distribution::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
-use mathol::vectoroperations::vector2d::Vector2D;
-use mathol::vectoroperations::vector3d::Vector3D;
+use mathol::vectoroperations::vector2d::{Vector2D, Polar};
+use mathol::vectoroperations::vector3d::{Vector3D, Cylindrical, Spherical};
 use mathol::vectoroperations::line3d::Line3D;
 use mathol::vectoroperations::plane::Plane;
 use mathol::matrices::matrice::Matrice;
@@ -274,32 +274,32 @@ fn get_torus_surface() {
 
 #[test]
 fn test_cartesic_to_polar_1() {
-    let cart = Cartesic2D {x: 4.0, y: 3.0};
-    let pol: Polar = cart.transform_to_polar();
+    let cart = Vector2D {x: 4.0, y: 3.0};
+    let pol = cart.transform_to_polar();
     assert_eq!(5.0, pol.r);
     assert_eq!(36.86989764584402, pol.phi);
 }
 
 #[test]
 fn test_cartesic_to_polar_2() {
-    let cart = Cartesic2D {x: -4.0, y: 3.0};
-    let pol: Polar = cart.transform_to_polar();
+    let cart = Vector2D {x: -4.0, y: 3.0};
+    let pol = cart.transform_to_polar();
     assert_eq!(5.0, pol.r);
     assert_eq!(143.13010235415598, pol.phi);
 }
 
 #[test]
 fn test_cartesic_to_polar_3() {
-    let cart = Cartesic2D {x: -4.0, y: -3.0};
-    let pol: Polar = cart.transform_to_polar();
+    let cart = Vector2D {x: -4.0, y: -3.0};
+    let pol = cart.transform_to_polar();
     assert_eq!(5.0, pol.r);
     assert_eq!(-143.13010235415598, pol.phi);
 }
 
 #[test]
 fn test_cartesic_to_polar_4() {
-    let cart = Cartesic2D {x: 4.0, y: -3.0};
-    let pol: Polar = cart.transform_to_polar();
+    let cart = Vector2D {x: 4.0, y: -3.0};
+    let pol = cart.transform_to_polar();
     assert_eq!(5.0, pol.r);
     assert_eq!(-36.86989764584402, pol.phi);
 }
@@ -307,7 +307,7 @@ fn test_cartesic_to_polar_4() {
 #[test]
 fn test_polar_to_cartesic_1() {
     let pol = Polar {r: 5.0, phi: 36.86989764584402};
-    let cart: Cartesic2D = pol.transform_to_cartesic2d();
+    let cart = pol.transform_to_vector2d();
     assert_eq!(4.0, cart.x);
     assert_eq!(3.0, cart.y);
 }
@@ -315,7 +315,7 @@ fn test_polar_to_cartesic_1() {
 #[test]
 fn test_polar_to_cartesic_2() {
     let pol = Polar {r: 5.0, phi: 143.13010235415598};
-    let cart: Cartesic2D = pol.transform_to_cartesic2d();
+    let cart = pol.transform_to_vector2d();
     assert_eq!(-4.0, cart.x);
     assert_eq!(3.0, cart.y);
 }
@@ -323,7 +323,7 @@ fn test_polar_to_cartesic_2() {
 #[test]
 fn test_polar_to_cartesic_3() {
     let pol = Polar {r: 5.0, phi: -143.13010235415598};
-    let cart: Cartesic2D = pol.transform_to_cartesic2d();
+    let cart = pol.transform_to_vector2d();
     assert_eq!(-4.0, cart.x);
     assert_eq!(-3.0, cart.y);
 }
@@ -331,15 +331,15 @@ fn test_polar_to_cartesic_3() {
 #[test]
 fn test_polar_to_cartesic_4() {
     let pol = Polar {r: 5.0, phi: -36.86989764584402};
-    let cart: Cartesic2D = pol.transform_to_cartesic2d();
+    let cart = pol.transform_to_vector2d();
     assert_eq!(4.0, cart.x);
     assert_eq!(-3.0, cart.y);
 }
 
 #[test]
 fn test_cartesic_to_cylindrical_1() {
-    let cart = Cartesic3D {x: 3.0, y: 4.0, z: 5.0};
-    let cyl: Cylindrical = cart.transform_to_cylindrical();
+    let cart = Vector3D {x: 3.0, y: 4.0, z: 5.0};
+    let cyl = cart.transform_to_cylindrical();
     assert_eq!(5.0, cyl.rho);
     assert_eq!(53.13010235415598, cyl.phi);
     assert_eq!(5.0, cyl.z);
@@ -347,8 +347,8 @@ fn test_cartesic_to_cylindrical_1() {
 
 #[test]
 fn test_cartesic_to_cylindrical_2() {
-    let cart = Cartesic3D {x: 0.0, y: 4.0, z: 5.0};
-    let cyl: Cylindrical = cart.transform_to_cylindrical();
+    let cart = Vector3D {x: 0.0, y: 4.0, z: 5.0};
+    let cyl = cart.transform_to_cylindrical();
     assert_eq!(4.0, cyl.rho);
     assert_eq!(90.0, cyl.phi);
     assert_eq!(5.0, cyl.z);
@@ -356,8 +356,8 @@ fn test_cartesic_to_cylindrical_2() {
 
 #[test]
 fn test_cartesic_to_cylindrical_3() {
-    let cart = Cartesic3D {x: 0.0, y: -4.0, z: 5.0};
-    let cyl: Cylindrical = cart.transform_to_cylindrical();
+    let cart = Vector3D {x: 0.0, y: -4.0, z: 5.0};
+    let cyl = cart.transform_to_cylindrical();
     assert_eq!(4.0, cyl.rho);
     assert_eq!(270.0, cyl.phi);
     assert_eq!(5.0, cyl.z);
@@ -366,7 +366,7 @@ fn test_cartesic_to_cylindrical_3() {
 #[test]
 fn test_cylindrical_to_cartesic() {
     let cyl = Cylindrical {rho: 5.0, phi: 53.13010235415598, z: 5.0};
-    let cart: Cartesic3D = cyl.transform_to_cartesic3d();
+    let cart = cyl.transform_to_vector3d();
     assert_eq!(3.0000000000000004, cart.x);
     assert_eq!(3.9999999999999996, cart.y);
     assert_eq!(5.0, cart.z);
@@ -374,8 +374,8 @@ fn test_cylindrical_to_cartesic() {
 
 #[test]
 fn test_cartesic_to_spherical() {
-    let cart = Cartesic3D {x: 3.0, y: 4.0, z: 5.0};
-    let sph: Spherical = cart.transform_to_spherical();
+    let cart = Vector3D {x: 3.0, y: 4.0, z: 5.0};
+    let sph = cart.transform_to_spherical();
     assert_eq!(7.0710678118654755, sph.r);
     assert_eq!(45.00000000000001, sph.theta);
     assert_eq!(53.13010235415598, sph.phi);
@@ -384,7 +384,7 @@ fn test_cartesic_to_spherical() {
 #[test]
 fn test_spherical_to_cartesic() {
     let sph = Spherical {r: 7.0710678118654755, theta: 45.0, phi: 53.13010235415598};
-    let cart: Cartesic3D = sph.transform_to_cartesic3d();
+    let cart = sph.transform_to_vector3d();
     assert_eq!(3.0000000000000004, cart.x);
     assert_eq!(3.9999999999999996, cart.y);
     assert_eq!(5.000000000000001, cart.z);

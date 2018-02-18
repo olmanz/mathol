@@ -4,7 +4,7 @@ use std::ops::Add;
 use std::cmp::PartialOrd;
 use std::fmt::Debug;
 use vectoroperations::vector2d::Vector2D;
-use num::Num;
+use num::{Num, FromPrimitive};
 use geometrics::traits::{Area, Perimeter, Height, Diagonal};
 
 #[allow(non_snake_case)]
@@ -34,7 +34,7 @@ impl Triangle
 
     #[allow(non_snake_case)]
     pub fn build_triangle_with_points<T>(A: &Vector2D<T>, B: &Vector2D<T>, C: &Vector2D<T>) -> Result<Triangle, &'static str>
-        where T: Num + Convert + Add<Output=T> + PartialOrd + Copy + Amount<T> + Debug
+        where T: Num + Convert + Add<Output=T> + PartialOrd + Copy + Amount<T> + Debug + FromPrimitive
     {
         let a = B.get_distance(C);
         let b = A.get_distance(C);

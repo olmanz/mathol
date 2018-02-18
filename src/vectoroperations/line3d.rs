@@ -6,7 +6,7 @@ use vectoroperations::vector3d::Vector3D;
 /// A struct for a parametric representation of a line in three-dimensional space
 #[derive(Debug)]
 pub struct Line3D<T>
-    where T: Num + Copy + Convert + Amount<T>
+    where T: Num + Copy + Convert + Amount<T> + PartialOrd + PartialEq
 {
     /// The support vector (a point on the line)
     pub r: Vector3D<T>,
@@ -15,7 +15,7 @@ pub struct Line3D<T>
 }
 
 impl<T> Line3D<T>
-    where T: Num + Copy + Convert + Amount<T> + Debug
+    where T: Num + Copy + Convert + Amount<T> + Debug + PartialOrd + PartialEq
 {
     /// Builds a line that goes through two given points p and q
     /// # Remarks

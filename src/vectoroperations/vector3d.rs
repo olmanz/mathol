@@ -1,11 +1,12 @@
 use num::Num;
-use basic::{Convert, Amount, pow};
+use basic::{Convert, Amount, pow, pythagoras2d, pythagoras3d};
 use std::fmt::Debug;
+use std::cmp::PartialOrd;
 
 /// Struct for three-dimensional vectors
 #[derive(Debug)]
 pub struct Vector3D<T>
-    where T: Num + Copy + Convert + Amount<T>
+    where T: Num + Copy + Convert + Amount<T> + PartialOrd
 {
     pub x: T,
     pub y: T,
@@ -13,7 +14,7 @@ pub struct Vector3D<T>
 }
 
 impl<T> Vector3D<T>
-    where T: Num + Copy + Convert + Amount<T> + Debug
+    where T: Num + Copy + Convert + Amount<T> + Debug + PartialOrd
 {
     /// Takes x, y and z values and returns a Vector3D instance
     /// # Examples
@@ -22,6 +23,42 @@ impl<T> Vector3D<T>
     /// ```
     pub fn build_vector(x: T, y: T, z: T) -> Vector3D<T> {
         Vector3D {x, y, z}
+    }
+
+    /// Transforms cartesic coordinates to cylindrical coordinates.
+    /// Returns an instance of the struct Cylindrical
+    pub fn transform_to_cylindrical(&self) -> Cylindrical<f64> {
+        Cylindrical {
+            rho: pythagoras2d(self.x, self.y),
+            phi: self.get_angle(),
+            z: self.z.to_f64(),
+        }
+    }
+
+    /// Transforms cartesic coordinates to spherical coordinates.
+    /// Returns an instance of the struct Spherical
+    pub fn transform_to_spherical(&self) -> Spherical<f64> {
+        let r = pythagoras3d(self.x, self.y, self.z);
+        Spherical {
+            r,
+            theta: (self.z.to_f64() / r).acos().to_degrees(),
+            phi: (self.y / self.x).to_f64().atan().to_degrees(),
+        }
+    }
+
+    /// Calculate the angle of the polar axis in relaion to the x-axis
+    pub fn get_angle(&self) -> f64 {
+        if self.x == T::zero() {
+            if self.y < T::zero(){
+                270.0
+            } else if self.y > T::zero() {
+                90.0
+            } else {
+                0.0
+            }
+        } else {
+            (self.y / self.x).to_f64().atan().to_degrees()
+        }
     }
 
     /// Adds a vector to another vector
@@ -167,5 +204,57 @@ impl<T> Vector3D<T>
     /// ```
     pub fn get_triple_product(&self, vec_1: &Vector3D<T>, vec_2: &Vector3D<T>) -> T {
         self.x * (vec_1.y * vec_2.z - vec_1.z * vec_2.y) + self.y * (vec_1.z * vec_2.x - vec_1.x * vec_2.z) + self.z * (vec_1.x * vec_2.y - vec_1.y * vec_2.x)
+    }
+}
+
+/// Rust struct for points in the cylindrical coordinate system.
+pub struct Cylindrical<T>
+    where T: Num + Copy + Convert + Amount<T>
+{
+    /// Distance from z-axis to the point
+    pub rho: T,
+    /// Angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane
+    pub phi: T,
+    /// Signed distance from the chosen plane to the point P
+    pub z: T,
+}
+
+impl<T> Cylindrical<T>
+    where T: Num + Copy + Convert + Amount<T>
+{
+    /// Transforms cylindrical coordinates to cartesic coordinates.
+    /// Returns an instance of the struct Cartesic
+    pub fn transform_to_vector3d(&self) -> Vector3D<f64> {
+        Vector3D {
+            x: self.rho.to_f64() * self.phi.to_f64().to_radians().cos(),
+            y: self.rho.to_f64() * self.phi.to_f64().to_radians().sin(),
+            z: self.z.to_f64(),
+        }
+    }
+}
+
+/// Rust struct for points in the spherical coordinate system.
+pub struct Spherical<T>
+    where T: Num + Copy + Convert + Amount<T>
+{
+    /// Distance from the origin point
+    pub r: T,
+    /// Signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment on the reference plane
+    pub theta: T,
+    /// Angle between the zenith direction and the line segment
+    pub phi: T,
+}
+
+impl<T> Spherical<T>
+    where T: Num + Copy + Convert + Amount<T>
+{
+    /// Transforms spherical coordinates to cartesic coordinates.
+    /// Returns an instance of the struct Cartesic
+    pub fn transform_to_vector3d(&self) -> Vector3D<f64> {
+        Vector3D {
+            x: self.r.to_f64() * self.theta.to_f64().to_radians().sin() * self.phi.to_f64().to_radians().cos(),
+            y: self.r.to_f64() * self.theta.to_f64().to_radians().sin() * self.phi.to_f64().to_radians().sin(),
+            z: self.r.to_f64() * self.theta.to_f64().to_radians().cos(),
+        }
     }
 }

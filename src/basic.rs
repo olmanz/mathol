@@ -27,12 +27,16 @@ pub fn upow(base: u64, exponent: u64) -> u64 {
     }
 }
 
-pub fn pythagoras2d(a: f64, b: f64) -> f64 {
-    ((a * a) + (b * b)).sqrt()
+pub fn pythagoras2d<T>(a: T, b: T) -> f64
+    where T: Num + Convert + Copy
+{
+    ((a * a) + (b * b)).to_f64().sqrt()
 }
 
-pub fn pythagoras3d(a: f64, b: f64, c: f64) -> f64 {
-    ((a * a) + (b * b) + (c * c)).sqrt()
+pub fn pythagoras3d<T>(a: T, b: T, c: T) -> f64
+    where T: Num + Convert + Copy
+{
+    ((a * a) + (b * b) + (c * c)).to_f64().sqrt()
 }
 
 pub trait Convert {

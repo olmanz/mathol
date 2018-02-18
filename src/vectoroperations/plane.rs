@@ -7,7 +7,7 @@ use vectoroperations::line3d::Line3D;
 /// A struct for a parametric representation of a plane in three-dimensional space
 #[derive(Debug)]
 pub struct Plane<T>
-    where T: Num + Copy + Convert + Amount<T>
+    where T: Num + Copy + Convert + Amount<T> + PartialOrd + PartialEq
 {
     /// The support vector (a point on the plane)
     pub r: Vector3D<T>,
@@ -18,7 +18,7 @@ pub struct Plane<T>
 }
 
 impl<T> Plane<T>
-    where T: Num + Copy + Convert + Amount<T> + Debug
+    where T: Num + Copy + Convert + Amount<T> + Debug + PartialOrd + PartialEq
 {
     /// Builds a line that goes through three given points p, q and r
     /// # Remarks
