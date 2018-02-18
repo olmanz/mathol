@@ -57,6 +57,20 @@ fn get_triangle_height() {
 }
 
 #[test]
+fn get_triangle_inner_circle() {
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    let circle = triangle.get_inner_circle();
+    assert_eq!(1.0, circle.r);
+}
+
+#[test]
+fn get_triangle_outer_circle() {
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    let circle = triangle.get_outer_circle();
+    assert_eq!(2.5, circle.r);
+}
+
+#[test]
 fn get_rectangle_diagonal() {
     let rectangle = Rectangle::build_rectangle(4, 9);
     assert_eq!(9.848857801796104, rectangle.get_diagonal());

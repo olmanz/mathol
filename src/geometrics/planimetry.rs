@@ -59,14 +59,17 @@ impl Triangle
         self.a * self.get_angles().1.to_radians().sin()
     }
 
-    // TODO
     pub fn get_inner_circle(&self) -> Circle {
-        unimplemented!()
+        let s = self.get_perimeter() / 2.0;
+        let r = ((s - self.a) * (s - self.b) * (s - self.c) / s).sqrt();
+        Circle::build_circle(r)
     }
 
-    // TODO
     pub fn get_outer_circle(&self) -> Circle {
-        unimplemented!()
+        let s = self.get_perimeter() / 2.0;
+        let r = (self.a * self.b * self.c) / (4.0 * (s * (s - self.a) * (s - self.b) * (s - self.c)).sqrt());
+        println!("a: {}, b: {}, c: {}, s: {}", self.a, self.b, self.c, s);
+        Circle::build_circle(r)
     }
 }
 
