@@ -1,6 +1,6 @@
 extern crate mathol;
-use mathol::basic::{Point, pow};
-use mathol::geometrics::planimetry::{Planimetry, Triangle};
+use mathol::basic::pow;
+use mathol::geometrics::planimetry::{Planimetry, Triangle, Rectangle, Parallelogram, Trapeze, Circle, Ellipsis};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
 use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
 use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
@@ -23,12 +23,105 @@ fn test_pow() {
 
 #[test]
 fn test_triangle_1() {
-    let triangle = Triangle::build_with_vertices(Point{x: 2.0, y: 1.0}, Point{x: 5.5, y: 2.0}, Point{x: 3.0, y: 4.5});
-    assert_eq!(3.5355339059327378, triangle.a_edge);
-    assert_eq!(3.640054944640259, triangle.b_edge);
-    assert_eq!(3.640054944640259, triangle.c_edge);
-    assert_eq!(5.624999999999997, triangle.get_area());
-    assert_eq!(10.815643795213255, triangle.get_perimeter());
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    assert_eq!(6.0 , triangle.get_area());
+}
+
+#[test]
+fn test_triangle_2() {
+    let triangle = Triangle::build_triangle_with_points(&Vector2D{x: 1, y:2}, &Vector2D{x: 6, y:2}, &Vector2D{x: 3, y:4}).unwrap();
+    assert_eq!(3.605551275463989, triangle.a);
+    assert_eq!(2.8284271247461903, triangle.b);
+    assert_eq!(5.0, triangle.c);
+}
+
+#[test]
+fn test_perimeter_1() {
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    assert_eq!(12.0 , triangle.get_perimeter());
+}
+
+#[test]
+fn test_get_angles_1() {
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    let (alpha, beta, gamma) = triangle.get_angles();
+    assert_eq!(36.86989764584401, alpha);
+    assert_eq!(53.13010235415599, beta);
+    assert_eq!(90.0, gamma);
+}
+
+#[test]
+fn get_triangle_height() {
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    assert_eq!(2.4000000000000004, triangle.get_height());
+}
+
+#[test]
+fn get_rectangle_diagonal() {
+    let rectangle = Rectangle::build_rectangle(4, 9);
+    assert_eq!(9.848857801796104, rectangle.get_diagonal());
+}
+
+#[test]
+fn get_rectangle_area() {
+    let rectangle = Rectangle::build_rectangle(4, 9);
+    assert_eq!(36.0, rectangle.get_area());
+}
+
+#[test]
+fn get_rectangle_perimeter() {
+    let rectangle = Rectangle::build_rectangle(4, 9);
+    assert_eq!(26.0, rectangle.get_perimeter());
+}
+
+#[test]
+fn get_parallelogram_diagonals() {
+    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
+    let (d1, d2) = parallelogram.get_diagonals();
+    assert_eq!(12.649110640673518, d1);
+    assert_eq!(7.211102550927978, d2);
+}
+
+#[test]
+fn get_parallelogram_area() {
+    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
+    assert_eq!(36.0, parallelogram.get_area());
+}
+
+#[test]
+fn get_parallelogram_perimeter() {
+    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
+    assert_eq!(28.0, parallelogram.get_perimeter());
+}
+
+#[test]
+fn get_trapeze_height() {
+    let trapeze = Trapeze::build_trapeze(9.0, 6.0, 4.2, 4.5);
+    assert_eq!(4.062729993489599, trapeze.get_height());
+}
+
+#[test]
+fn get_circle_area() {
+    let circle = Circle::build_circle(2);
+    assert_eq!(12.566370614359172, circle.get_area());
+}
+
+#[test]
+fn get_circle_perimeter() {
+    let circle = Circle::build_circle(2);
+    assert_eq!(12.566370614359172, circle.get_perimeter());
+}
+
+#[test]
+fn get_ellipsis_area() {
+    let ellipsis = Ellipsis::build_ellipsis(2, 3);
+    assert_eq!(18.84955592153876, ellipsis.get_area());
+}
+
+#[test]
+fn get_ellipsis_perimeter() {
+    let ellipsis = Ellipsis::build_ellipsis(2, 3);
+    assert_eq!(15.866645920952264, ellipsis.get_perimeter());
 }
 
 #[test]
@@ -1130,73 +1223,73 @@ fn test_insert_columns() {
     assert_eq!(vec![1, 2, 5, 3, 4, 6], m.data);
 }
 
-#[test]
-fn test_cut_matrices_1() {
-    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
-    let vec = m.cut_matrices(2);
-    assert_eq!(vec![2, 3, 0, 4], vec[0].data);
-    assert_eq!(vec![3, 1, 4, 2], vec[1].data);
-}
-
-#[test]
-fn test_cut_matrices_2() {
-    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
-    let vec = m.cut_matrices(2);
-    assert_eq!(vec![2, 3, 1, 0], vec[0].data);
-    assert_eq!(vec![1, 0, 4, 2], vec[1].data);
-}
-
-#[test]
-fn test_cut_matrices_3() {
-    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
-    let vec = m.cut_matrices(1);
-    assert_eq!(vec![2], vec[0].data);
-    assert_eq!(vec![3], vec[1].data);
-    assert_eq!(vec![1], vec[2].data);
-    assert_eq!(vec![0], vec[3].data);
-    assert_eq!(vec![4], vec[4].data);
-    assert_eq!(vec![2], vec[5].data);
-}
-
-#[test]
-fn test_cut_matrices_4() {
-    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
-    let vec = m.cut_matrices(1);
-    assert_eq!(vec![2], vec[0].data);
-    assert_eq!(vec![3], vec[1].data);
-    assert_eq!(vec![1], vec[2].data);
-    assert_eq!(vec![0], vec[3].data);
-    assert_eq!(vec![4], vec[4].data);
-    assert_eq!(vec![2], vec[5].data);
-}
-
-#[test]
-fn test_cut_matrices_5() {
-    let m = Matrice::build_matrice(3, 4, vec![3, 9, 7, 8, 4, 9, 5, 5, 2, 3, 8, 7]).unwrap();
-    let s3 = m.cut_matrices(3);
-    assert_eq!(vec![3, 9, 7, 4, 9, 5, 2, 3, 8], s3[0].data);
-    assert_eq!(vec![9, 7, 8, 9, 5, 5, 3, 8, 7], s3[1].data);
-    let s2 = m.cut_matrices(2);
-    assert_eq!(vec![3, 9, 4, 9], s2[0].data);
-    assert_eq!(vec![9, 7, 9, 5], s2[1].data);
-    assert_eq!(vec![7, 8, 5, 5], s2[2].data);
-    assert_eq!(vec![4, 9, 2, 3], s2[3].data);
-    assert_eq!(vec![9, 5, 3, 8], s2[4].data);
-    assert_eq!(vec![5, 5, 8, 7], s2[5].data);
-    let s1 = m.cut_matrices(1);
-    assert_eq!(vec![3], s1[0].data);
-    assert_eq!(vec![9], s1[1].data);
-    assert_eq!(vec![7], s1[2].data);
-    assert_eq!(vec![8], s1[3].data);
-    assert_eq!(vec![4], s1[4].data);
-    assert_eq!(vec![9], s1[5].data);
-    assert_eq!(vec![5], s1[6].data);
-    assert_eq!(vec![5], s1[7].data);
-    assert_eq!(vec![2], s1[8].data);
-    assert_eq!(vec![3], s1[9].data);
-    assert_eq!(vec![8], s1[10].data);
-    assert_eq!(vec![7], s1[11].data);
-}
+//#[test]
+//fn test_cut_matrices_1() {
+//    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
+//    let vec = m.cut_matrices(2);
+//    assert_eq!(vec![2, 3, 0, 4], vec[0].data);
+//    assert_eq!(vec![3, 1, 4, 2], vec[1].data);
+//}
+//
+//#[test]
+//fn test_cut_matrices_2() {
+//    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
+//    let vec = m.cut_matrices(2);
+//    assert_eq!(vec![2, 3, 1, 0], vec[0].data);
+//    assert_eq!(vec![1, 0, 4, 2], vec[1].data);
+//}
+//
+//#[test]
+//fn test_cut_matrices_3() {
+//    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
+//    let vec = m.cut_matrices(1);
+//    assert_eq!(vec![2], vec[0].data);
+//    assert_eq!(vec![3], vec[1].data);
+//    assert_eq!(vec![1], vec[2].data);
+//    assert_eq!(vec![0], vec[3].data);
+//    assert_eq!(vec![4], vec[4].data);
+//    assert_eq!(vec![2], vec[5].data);
+//}
+//
+//#[test]
+//fn test_cut_matrices_4() {
+//    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
+//    let vec = m.cut_matrices(1);
+//    assert_eq!(vec![2], vec[0].data);
+//    assert_eq!(vec![3], vec[1].data);
+//    assert_eq!(vec![1], vec[2].data);
+//    assert_eq!(vec![0], vec[3].data);
+//    assert_eq!(vec![4], vec[4].data);
+//    assert_eq!(vec![2], vec[5].data);
+//}
+//
+//#[test]
+//fn test_cut_matrices_5() {
+//    let m = Matrice::build_matrice(3, 4, vec![3, 9, 7, 8, 4, 9, 5, 5, 2, 3, 8, 7]).unwrap();
+//    let s3 = m.cut_matrices(3);
+//    assert_eq!(vec![3, 9, 7, 4, 9, 5, 2, 3, 8], s3[0].data);
+//    assert_eq!(vec![9, 7, 8, 9, 5, 5, 3, 8, 7], s3[1].data);
+//    let s2 = m.cut_matrices(2);
+//    assert_eq!(vec![3, 9, 4, 9], s2[0].data);
+//    assert_eq!(vec![9, 7, 9, 5], s2[1].data);
+//    assert_eq!(vec![7, 8, 5, 5], s2[2].data);
+//    assert_eq!(vec![4, 9, 2, 3], s2[3].data);
+//    assert_eq!(vec![9, 5, 3, 8], s2[4].data);
+//    assert_eq!(vec![5, 5, 8, 7], s2[5].data);
+//    let s1 = m.cut_matrices(1);
+//    assert_eq!(vec![3], s1[0].data);
+//    assert_eq!(vec![9], s1[1].data);
+//    assert_eq!(vec![7], s1[2].data);
+//    assert_eq!(vec![8], s1[3].data);
+//    assert_eq!(vec![4], s1[4].data);
+//    assert_eq!(vec![9], s1[5].data);
+//    assert_eq!(vec![5], s1[6].data);
+//    assert_eq!(vec![5], s1[7].data);
+//    assert_eq!(vec![2], s1[8].data);
+//    assert_eq!(vec![3], s1[9].data);
+//    assert_eq!(vec![8], s1[10].data);
+//    assert_eq!(vec![7], s1[11].data);
+//}
 
 #[test]
 fn test_get_rank_1() {
