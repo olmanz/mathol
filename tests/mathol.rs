@@ -4,9 +4,9 @@ use mathol::geometrics::planimetry::{Triangle, Rectangle, Parallelogram, Trapeze
 use mathol::geometrics::stereometry::{Cuboid, Pyramid, Wedge, Cylinder, Cone, Sphere, Ellipsoid, SphericBarrel, ParabolicBarrel, Torus};
 use mathol::geometrics::traits::*;
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
-use mathol::stochastics::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
-use mathol::stochastics::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
-use mathol::stochastics::{gaussian_distribution, standard_distribution, exponential_distribution};
+use mathol::stochastics::probability::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
+use mathol::stochastics::distribution::{binomial_distribution, hypergeometric_distribution, poisson_distribution};
+use mathol::stochastics::distribution::{gaussian_distribution, standard_distribution, exponential_distribution};
 use mathol::statistics::{get_arithmetic_mean, get_harmonic_mean, get_quadratic_mean, get_variance, get_standard_deviation};
 use mathol::statistics::{get_min, get_max, get_span};
 use mathol::vectoroperations::vector2d::Vector2D;
