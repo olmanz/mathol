@@ -68,8 +68,6 @@ impl<T> Plane<T>
     pub fn get_distance_from_point(&self, p: &Vector3D<T>) -> f64 {
         let n = self.a.get_vector_product(&self.b);
         let r = p.sub_vector(&self.r);
-        println!("n: {:?}", n);
-        println!("r: {:?}", r);
         let d = n.get_scalar_product(&r).to_f64().get_amount() / n.get_length().get_amount();
         d
     }

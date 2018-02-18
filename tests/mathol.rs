@@ -1,5 +1,4 @@
 extern crate mathol;
-//use num::Num;
 use mathol::basic::{Point, pow};
 use mathol::geometrics::planimetry::{Planimetry, Triangle};
 use mathol::coordinatesystems::{Cartesic2D, Polar, Cartesic3D, Cylindrical, Spherical};
@@ -12,7 +11,8 @@ use mathol::vectoroperations::vector2d::Vector2D;
 use mathol::vectoroperations::vector3d::Vector3D;
 use mathol::vectoroperations::line3d::Line3D;
 use mathol::vectoroperations::plane::Plane;
-use mathol::matrices::Matrice;
+use mathol::matrices::matrice::Matrice;
+use mathol::matrices::solvable::Solvable;
 
 #[test]
 fn test_pow() {
@@ -897,3 +897,386 @@ fn test_get_element_panic() {
     assert_eq!(Err("Row is out of bounds"), matrice.get_element(3, 2));
     assert_eq!(Err("Column is out of bounds"), matrice.get_element(2, 3));
 }
+
+#[test]
+fn test_get_trace() {
+    let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
+    assert_eq!(Ok(15), matrice.get_trace());
+}
+
+#[test]
+fn test_get_trace_panic_1() {
+    let matrice = Matrice::build_matrice(3, 4, vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).unwrap();
+    assert_eq!(Err("The matrice is not quadratic"), matrice.get_trace());
+}
+
+#[test]
+fn test_get_trace_panic_2() {
+    let matrice = Matrice::build_matrice(2, 3, vec![1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(Err("The matrice is not quadratic"), matrice.get_trace());
+}
+
+#[test]
+fn test_add_matrices() {
+    let m1 = Matrice::build_matrice(2, 3, vec![1, 5, -3, 4, 0, 8]).unwrap();
+    let m2 = Matrice::build_matrice(2, 3, vec![5, 1, 3, -1, 4, 7]).unwrap();
+    let m3 = m1.add_matrice(&m2).unwrap();
+    assert_eq!(vec![6, 6, 0, 3, 4, 15], m3.data);
+}
+
+#[test]
+fn test_add_matrices_panic_1() {
+    let m1 = Matrice::build_matrice(2, 3, vec![1, 5, -3, 4, 0, 8]).unwrap();
+    let m2 = Matrice::build_matrice(2, 2, vec![5, 1, 3, -1]).unwrap();
+    assert_eq!(Err("The two matrices do not have the same number of rows or columns"), m1.add_matrice(&m2))
+}
+
+#[test]
+fn test_add_matrices_panic_2() {
+    let m1 = Matrice::build_matrice(3, 3, vec![1, 5, -3, 4, 0, 8, 1, 2, 3]).unwrap();
+    let m2 = Matrice::build_matrice(2, 3, vec![5, 1, 3, -1, 4, 7]).unwrap();
+    assert_eq!(Err("The two matrices do not have the same number of rows or columns"), m1.add_matrice(&m2))
+}
+
+#[test]
+fn test_subtract_matrices() {
+    let m1 = Matrice::build_matrice(2, 3, vec![1, 5, -3, 4, 0, 8]).unwrap();
+    let m2 = Matrice::build_matrice(2, 3, vec![5, 1, 3, -1, 4, 7]).unwrap();
+    let m3 = m1.subtract_matrice(&m2).unwrap();
+    assert_eq!(vec![-4, 4, -6, 5, -4, 1], m3.data);
+}
+
+#[test]
+fn test_subtract_matrices_panic_1() {
+    let m1 = Matrice::build_matrice(2, 3, vec![1, 5, -3, 4, 0, 8]).unwrap();
+    let m2 = Matrice::build_matrice(2, 2, vec![5, 1, 3, -1]).unwrap();
+    assert_eq!(Err("The two matrices do not have the same number of rows or columns"), m1.subtract_matrice(&m2))
+}
+
+#[test]
+fn test_subtract_matrices_panic_2() {
+    let m1 = Matrice::build_matrice(3, 3, vec![1, 5, -3, 4, 0, 8, 1, 2, 3]).unwrap();
+    let m2 = Matrice::build_matrice(2, 3, vec![5, 1, 3, -1, 4, 7]).unwrap();
+    assert_eq!(Err("The two matrices do not have the same number of rows or columns"), m1.subtract_matrice(&m2))
+}
+
+#[test]
+fn test_multiply_with_scalar() {
+    let matrice = Matrice::build_matrice(2, 3, vec![1, -5, 3, 4, 1, 0]).unwrap();
+    assert_eq!(vec![4, -20, 12, 16, 4, 0], matrice.multiply_with_scalar(4).data);
+    assert_eq!(vec![-3, 15, -9, -12, -3, 0], matrice.multiply_with_scalar(-3).data);
+}
+
+#[test]
+fn test_get_row() {
+    let a = Matrice::build_matrice(3, 3, vec![1, 4, -2, 0, 1, 1, -3, 2, 5]).unwrap();
+    assert_eq!(Ok(vec![1, 4, -2]), a.get_row(0));
+    assert_eq!(Ok(vec![0, 1, 1]), a.get_row(1));
+    assert_eq!(Ok(vec![-3, 2, 5]), a.get_row(2));
+}
+
+#[test]
+fn test_get_row_panic() {
+    let a = Matrice::build_matrice(3, 3, vec![1, 4, -2, 0, 1, 1, -3, 2, 5]).unwrap();
+    assert_eq!(Err("Row is out of bounds"), a.get_row(3));
+}
+
+#[test]
+fn test_get_column() {
+    let b = Matrice::build_matrice(3, 3, vec![3, 0, 1, -2, 1, 5, 2, 3, 8]).unwrap();
+    assert_eq!(Ok(vec![3, -2, 2]), b.get_column(0));
+    assert_eq!(Ok(vec![0, 1, 3]), b.get_column(1));
+    assert_eq!(Ok(vec![1, 5, 8]), b.get_column(2));
+}
+
+#[test]
+fn test_get_column_panic() {
+    let b = Matrice::build_matrice(3, 3, vec![3, 0, 1, -2, 1, 5, 2, 3, 8]).unwrap();
+    assert_eq!(Err("Column is out of bounds"), b.get_column(3));
+}
+
+#[test]
+fn test_multiply_with_matrice_1() {
+    let a = Matrice::build_matrice(3, 3, vec![1, 4, -2, 0, 1, 1, -3, 2, 5]).unwrap();
+    let b = Matrice::build_matrice(3, 3, vec![3, 0, 1, -2, 1, 5, 2, 3, 8]).unwrap();
+    assert_eq!(vec![-9, -2, 5, 0, 4, 13, -3, 17, 47], a.multiply_with_matrice(&b).unwrap().data);
+}
+
+#[test]
+fn test_multiply_with_matrice_2() {
+    let a = Matrice::build_matrice(2, 3, vec![1, -3, 2, 0, 2, 1]).unwrap();
+    let b = Matrice::build_matrice(3, 1, vec![1, 5, 4]).unwrap();
+    assert_eq!(vec![-6, 14], a.multiply_with_matrice(&b).unwrap().data);
+}
+
+#[test]
+fn test_multiply_with_matrice_panic() {
+    let a = Matrice::build_matrice(3, 1, vec![1, 5, 4]).unwrap();
+    let b = Matrice::build_matrice(3, 3, vec![3, 0, 1, -2, 1, 5, 2, 3, 8]).unwrap();
+    assert_eq!(Err("Matrix A must have the same number of columns as Matrix B has number of rows"), a.multiply_with_matrice(&b));
+}
+
+#[test]
+fn test_get_main_diagonal_product() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 3, 2, 0, 1, 6, 5, 1]).unwrap();
+    assert_eq!(Ok(0), m.get_main_diagonal_product(0));
+    assert_eq!(Ok(-12), m.get_main_diagonal_product(1));
+    assert_eq!(Ok(30), m.get_main_diagonal_product(2));
+}
+
+#[test]
+fn test_get_main_diagonal_product_panic() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 3, 2, 0, 1, 6, 5, 1]).unwrap();
+    assert_eq!(Err("Column is out of bounds"), m.get_main_diagonal_product(3));
+}
+
+#[test]
+fn test_get_side_diagonal_product() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 3, 2, 0, 1, 6, 5, 1]).unwrap();
+    assert_eq!(Ok(0), m.get_side_diagonal_product(0));
+    assert_eq!(Ok(5), m.get_side_diagonal_product(1));
+    assert_eq!(Ok(-4), m.get_side_diagonal_product(2));
+}
+
+#[test]
+fn test_get_side_diagonal_product_panic() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 3, 2, 0, 1, 6, 5, 1]).unwrap();
+    assert_eq!(Err("Column is out of bounds"), m.get_side_diagonal_product(3));
+}
+
+#[test]
+fn test_get_determinant_1() {
+    let m = Matrice::build_matrice(2, 2, vec![4, 7, -3, 8]).unwrap();
+    assert_eq!(Ok(53), m.get_determinant());
+}
+
+#[test]
+fn test_get_determinant_2() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 3, 2, 0, 1, 6, 5, 1]).unwrap();
+    assert_eq!(Ok(17), m.get_determinant());
+}
+
+#[test]
+fn test_get_determinant_3() {
+    let m = Matrice::build_matrice(4, 4, vec![1, 2, 0, -1, 4, 0, -3, 2, 9, 0, 0, 4, 8, 1, 3, 1]).unwrap();
+    assert_eq!(Ok(87), m.get_determinant());
+}
+
+#[test]
+fn test_get_determinant_5() {
+    let m = Matrice::build_matrice(3, 3, vec![1.0, -2.0, 3.0, 2.0, 0.0, 1.0, 6.0, 5.0, 1.0]).unwrap();
+    assert_eq!(Ok(17.0), m.get_determinant());
+}
+
+#[test]
+fn test_get_determinant_4() {
+    let m = Matrice::build_matrice(5, 5, vec![-1, 1, 0, -2, 0,
+                                                                0, 2, 1, -1, 4,
+                                                                1, 0, 0, -3, 1,
+                                                                1, 2, 0, 0, 3,
+                                                                0, -2, 1, 2, 2]).unwrap();
+    assert_eq!(Ok(26), m.get_determinant());
+}
+
+#[test]
+fn test_get_determinant_panic() {
+    let m = Matrice::build_matrice(2, 3, vec![4, 7, -3, 8, 1, 2]).unwrap();
+    assert_eq!(Err("The matrice is not quadratic"), m.get_determinant());
+}
+
+#[test]
+fn get_submatrice_1() {
+    let m = Matrice::build_matrice(4, 4, vec![1, 2, 0, -1, 4, 0, -3, 2, 9, 0, 0, 4, 8, 1, 3, 1]).unwrap();
+    assert_eq!(vec![2, 0, -1, 0, -3, 2, 1, 3, 1], m.get_submatrice(2, 0).data);
+}
+
+#[test]
+fn get_submatrice_2() {
+    let m = Matrice::build_matrice(4, 4, vec![1, 2, 0, -1, 4, 0, -3, 2, 9, 0, 0, 4, 8, 1, 3, 1]).unwrap();
+    assert_eq!(vec![1, 2, 0, 4, 0, -3, 8, 1, 3], m.get_submatrice(2, 3).data);
+}
+
+#[test]
+fn test_get_inverse_matrice_1() {
+    let m = Matrice::build_matrice(3, 3, vec![1, 0, -1, -8, 4, 1, -2, 1, 0]).unwrap();
+    assert_eq!(vec![1, 1, -4, 2, 2, -7, 0, 1, -4], m.get_inverse_matrice().unwrap().data);
+}
+
+#[test]
+fn test_get_inverse_matrice_2() {
+    let m = Matrice::build_matrice(3, 3, vec![1.0, 0.0, -1.0, -8.0, 4.0, 1.0, -2.0, 1.0, 0.0]).unwrap();
+    assert_eq!(vec![1.0, 1.0, -4.0, 2.0, 2.0, -7.0, 0.0, 1.0, -4.0], m.get_inverse_matrice().unwrap().data);
+}
+
+#[test]
+fn test_get_inverse_matrice_panic() {
+    let m = Matrice::build_matrice(2, 3, vec![4, 7, -3, 8, 1, 2]).unwrap();
+    assert_eq!(Err("The matrice is not quadratic"), m.get_inverse_matrice());
+}
+
+#[test]
+fn test_insert_row() {
+    let mut m = Matrice::build_matrice(2, 2, vec![1, 2, 3, 4]).unwrap();
+    m.insert_row(&vec![5, 6]);
+    assert_eq!(3, m.rows);
+    assert_eq!(vec![1, 2, 3, 4, 5, 6], m.data);
+}
+
+#[test]
+fn test_insert_columns() {
+    let mut m = Matrice::build_matrice(2, 2, vec![1, 2, 3, 4]).unwrap();
+    m.insert_column(&vec![5, 6]);
+    assert_eq!(3, m.columns);
+    assert_eq!(vec![1, 2, 5, 3, 4, 6], m.data);
+}
+
+#[test]
+fn test_cut_matrices_1() {
+    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
+    let vec = m.cut_matrices(2);
+    assert_eq!(vec![2, 3, 0, 4], vec[0].data);
+    assert_eq!(vec![3, 1, 4, 2], vec[1].data);
+}
+
+#[test]
+fn test_cut_matrices_2() {
+    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
+    let vec = m.cut_matrices(2);
+    assert_eq!(vec![2, 3, 1, 0], vec[0].data);
+    assert_eq!(vec![1, 0, 4, 2], vec[1].data);
+}
+
+#[test]
+fn test_cut_matrices_3() {
+    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
+    let vec = m.cut_matrices(1);
+    assert_eq!(vec![2], vec[0].data);
+    assert_eq!(vec![3], vec[1].data);
+    assert_eq!(vec![1], vec[2].data);
+    assert_eq!(vec![0], vec[3].data);
+    assert_eq!(vec![4], vec[4].data);
+    assert_eq!(vec![2], vec[5].data);
+}
+
+#[test]
+fn test_cut_matrices_4() {
+    let m = Matrice::build_matrice(3, 2, vec![2, 3, 1, 0, 4, 2]).unwrap();
+    let vec = m.cut_matrices(1);
+    assert_eq!(vec![2], vec[0].data);
+    assert_eq!(vec![3], vec[1].data);
+    assert_eq!(vec![1], vec[2].data);
+    assert_eq!(vec![0], vec[3].data);
+    assert_eq!(vec![4], vec[4].data);
+    assert_eq!(vec![2], vec[5].data);
+}
+
+#[test]
+fn test_cut_matrices_5() {
+    let m = Matrice::build_matrice(3, 4, vec![3, 9, 7, 8, 4, 9, 5, 5, 2, 3, 8, 7]).unwrap();
+    let s3 = m.cut_matrices(3);
+    assert_eq!(vec![3, 9, 7, 4, 9, 5, 2, 3, 8], s3[0].data);
+    assert_eq!(vec![9, 7, 8, 9, 5, 5, 3, 8, 7], s3[1].data);
+    let s2 = m.cut_matrices(2);
+    assert_eq!(vec![3, 9, 4, 9], s2[0].data);
+    assert_eq!(vec![9, 7, 9, 5], s2[1].data);
+    assert_eq!(vec![7, 8, 5, 5], s2[2].data);
+    assert_eq!(vec![4, 9, 2, 3], s2[3].data);
+    assert_eq!(vec![9, 5, 3, 8], s2[4].data);
+    assert_eq!(vec![5, 5, 8, 7], s2[5].data);
+    let s1 = m.cut_matrices(1);
+    assert_eq!(vec![3], s1[0].data);
+    assert_eq!(vec![9], s1[1].data);
+    assert_eq!(vec![7], s1[2].data);
+    assert_eq!(vec![8], s1[3].data);
+    assert_eq!(vec![4], s1[4].data);
+    assert_eq!(vec![9], s1[5].data);
+    assert_eq!(vec![5], s1[6].data);
+    assert_eq!(vec![5], s1[7].data);
+    assert_eq!(vec![2], s1[8].data);
+    assert_eq!(vec![3], s1[9].data);
+    assert_eq!(vec![8], s1[10].data);
+    assert_eq!(vec![7], s1[11].data);
+}
+
+#[test]
+fn test_get_rank_1() {
+    let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
+    assert_eq!(Ok(2), m.get_rank());
+}
+
+#[test]
+fn test_get_rank_2() {
+    let m = Matrice::build_matrice(3, 4, vec![1, 3, -5, 0, 2, 7, -8, 7, -1, 0, 11, 21]).unwrap();
+    assert_eq!(Ok(2), m.get_rank());
+}
+
+#[test]
+fn test_get_rank_3() {
+    let m = Matrice::build_matrice(3, 4, vec![1, 1, 1, 0, 2, -1, 1, 3, 1, -2, 0, 3]).unwrap();
+    assert_eq!(Ok(2), m.get_rank());
+}
+
+#[test]
+fn test_get_rank_4() {
+    let m = Matrice::build_matrice(2, 2, vec![1, 3, 0, 3]).unwrap();
+    assert_eq!(Ok(2), m.get_rank());
+}
+
+#[test]
+fn test_is_solvable_1() {
+    let m = Matrice::build_matrice(2, 3, vec![1, -2, 1, 1, 1, -4]).unwrap();
+    let c = vec![1, 8];
+    assert_eq!(Solvable::InfiniteSolutions, m.is_solvable(&c));
+}
+
+#[test]
+fn test_is_solvable_2() {
+    let m = Matrice::build_matrice(3, 2, vec![1, 2, 5, 9, 2, -3]).unwrap();
+    let c = vec![4, 9, -10];
+    assert_eq!(Solvable::NoSolution, m.is_solvable(&c));
+}
+
+#[test]
+fn test_is_solvable_3() {
+    let m = Matrice::build_matrice(3, 3, vec![1, -2, 1, 2, 1, -1, -1, -4, 3]).unwrap();
+    let c = vec![6, -3, 14];
+    assert_eq!(Solvable::OneSolution, m.is_solvable(&c));
+}
+
+#[test]
+fn test_shuffle() {
+    let m = Matrice::build_matrice(4, 4, vec![0, 2, 4, 3, 3, 1, 0, 2, 0, 0, 0, 1, 0, 0, 2, 2]).unwrap();
+    let (vecs, c) = m.shuffle(&vec![1, 2, 3, 4]);
+    assert_eq!(vec![vec![3, 1, 0, 2], vec![0, 2, 4, 3], vec![0, 0, 2, 2], vec![0, 0, 0, 1]], vecs);
+    assert_eq!(vec![2, 1, 4, 3], c);
+}
+
+//#[test]
+//fn test_solve_1() {
+//    let m = Matrice::build_matrice(4, 4, vec![2, 1, 4, 3, -1, 2, 1, -1, 3, 4, -1, -2, 4, 3, 2, 1]).unwrap();
+//    let (vecs, c) = m.solve(&vec![0, 4, 0, 0]).unwrap();
+//    assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
+//    assert_eq!(vec![2.0, -4.0, 6.0, -8.0], c);
+//}
+
+//#[test]
+//fn test_solve_4() {
+//    let m = Matrice::build_matrice(4, 4, vec![0, 3, -5, 1, 1, -3, 0, -1, -2, 1, 2, 2, -3, 4, 2, 2]).unwrap();
+//    let (vecs, c) = m.solve(&vec![0, -5, 2, 8]).unwrap();
+//    assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
+//    assert_eq!(vec![0.0, 2.0, 1.0, -1.0], c);
+//}
+
+//#[test]
+//fn test_solve_2() {
+//    let m = Matrice::build_matrice(4, 4, vec![1.0, -3.0, 1.5, -1.0, -2.0, 1.0, 3.5, 2.0, 1.0, -2.0, 1.2, 2.0, 3.0, 1.0, -1.0, -3.0]).unwrap();
+//    let (vecs, c) = m.solve(&vec![-10.4, -16.5, 0.0, -0.7]).unwrap();
+//    assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
+//    assert_eq!(vec![0.808, -0.184, -5.88, 2.94], c);
+//}
+
+//#[test]
+//fn test_solve_3() {
+//    let m = Matrice::build_matrice(3, 3, vec![1, 1, -2, 1, -1, -2, 2, 3, -4]).unwrap();
+//    assert_eq!(Err("The linear system is not solvable or it has infinite solutions"), m.solve(&vec![0, 0, 0]));
+//}
