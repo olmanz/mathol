@@ -3,7 +3,8 @@ use std::iter::{Sum, Product};
 use std::ops::{Mul};
 use std::iter::Iterator;
 use basic::{pow};
-use error::{NegativeValueError, PermutationError, CombinationError, VariationError};
+use error::*;
+use std::fmt::{Debug, Display};
 
 /// Calculates the factorial of a given number n.
 /// # Remarks
@@ -14,13 +15,13 @@ use error::{NegativeValueError, PermutationError, CombinationError, VariationErr
 /// assert_eq!(2432902008176640000, factorial(20_u64).unwrap());
 /// assert_eq!(479001600, factorial(12_i32).unwrap());
 /// ```
-pub fn factorial<T>(n: T) -> Result<T, NegativeValueError>
+pub fn factorial<T>(n: T) -> Result<T, MatholError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err(NegativeValueError {
-            message: "Value for facultation must be a positive integer!".to_string(),
-        });
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
+            message: "Value for factorial must be a positive integer".to_string(),
+        }));
     }
 
     Ok(range(T::one(), n + T::one()).product())
@@ -38,30 +39,30 @@ pub fn factorial<T>(n: T) -> Result<T, NegativeValueError>
 /// ```
 /// assert_eq!(10, permutation(5, vec![3, 2]).unwrap());
 /// ```
-pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, PermutationError>
-    where T: PrimInt + Integer + Product + Mul + Sum
+pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, MatholError>
+    where T: PrimInt + Integer + Product + Mul + Sum + Debug + Display
 {
     if n < T::one() {
-        return Err(PermutationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if karr.is_empty() {
-        return Err(PermutationError {
+        return Err(MatholError::EmptyVecCause(EmptyVectorError {
             message: "Parameter karr is an empty vector!".to_string(),
-        });
+        }));
     }
 
     let karr_2 = karr.clone();
     let sum: T = karr.into_iter().sum();
     if sum != n {
-        return Err(PermutationError {
-            message: "Sum of parts is not equal to whole".to_string(),
-        });
+        return Err(MatholError::SummationCause(SummationError {
+            message: format!("Number of total elements is {:?}, but the summed number of elements from the subset is {:?}", n, sum),
+        }));
     }
 
     let divisor = karr_2.into_iter().fold(T::one(), |prod, x| prod * factorial(x).unwrap());
-    Ok(factorial(n).unwrap() / divisor)
+    Ok(factorial(n)? / divisor)
 }
 
 /// Calculates how many times the elements of a given set can be arranged in no particular order without repetition.
@@ -75,26 +76,26 @@ pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, PermutationError>
 /// ```
 /// assert_eq!(792, combination(12, 7).unwrap());
 /// ```
-pub fn combination<T>(n: T, k: T) -> Result<T, CombinationError>
+pub fn combination<T>(n: T, k: T) -> Result<T, MatholError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err(CombinationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k < T::zero() {
-        return Err(CombinationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter k must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k > n {
-        return Err(CombinationError {
-            message: "Number of selections outgrows the number of elements".to_string(),
-        });
+        return Err(MatholError::OutgrowCause(OutgrowError {
+            message: format!("k is bigger than n"),
+        }));
     }
 
-    Ok(factorial(n).unwrap() / factorial(n - k).unwrap() / factorial(k).unwrap())
+    Ok(factorial(n)? / factorial(n - k)? / factorial(k)?)
 }
 
 /// Calculates how many times the elements of a given set can be arranged in no particular order with repetition.
@@ -108,22 +109,22 @@ pub fn combination<T>(n: T, k: T) -> Result<T, CombinationError>
 /// ```
 /// assert_eq!(220, combination_with_repetition(10, 3).unwrap());
 /// ```
-pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, CombinationError>
+pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, MatholError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err(CombinationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k < T::zero() {
-        return Err(CombinationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter k must be a positive integer!".to_string(),
-        });
+        }));
     }
 
     let m = n + k - T::one();
-    Ok(factorial(m).unwrap() / factorial(m - k).unwrap() / factorial(k).unwrap())
+    Ok(factorial(m)? / factorial(m - k)? / factorial(k)?)
 }
 
 /// Calculates how many times the elements of a given set can be arranged in a particular order without repetition.
@@ -139,26 +140,26 @@ pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, CombinationError>
 /// ```
 /// assert_eq!(336, variation(8, 3).unwrap());
 /// ```
-pub fn variation<T>(n: T, k: T) -> Result<T, VariationError>
+pub fn variation<T>(n: T, k: T) -> Result<T, MatholError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err(VariationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k < T::zero() {
-        return Err(VariationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter k must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k > n {
-        return Err(VariationError {
-            message: "Number of selections outgrows the number of elements".to_string(),
-        });
+        return Err(MatholError::OutgrowCause(OutgrowError {
+            message: format!("k is bigger than n"),
+        }));
     }
 
-    Ok(factorial(n).unwrap() / factorial(n - k).unwrap())
+    Ok(factorial(n)? / factorial(n - k)?)
 }
 
 /// Calculates how many times the elements of a given set can be arranged in a particular order with repetition.
@@ -174,18 +175,18 @@ pub fn variation<T>(n: T, k: T) -> Result<T, VariationError>
 /// ```
 /// assert_eq!(125, variation_with_repetition(5, 3).unwrap());
 /// ```
-pub fn variation_with_repetition<T>(n: T, k: T) -> Result<T, VariationError>
+pub fn variation_with_repetition<T>(n: T, k: T) -> Result<T, MatholError>
     where T: PrimInt + Integer
 {
     if n < T::zero() {
-        return Err(VariationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if k < T::zero() {
-        return Err(VariationError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter k must be a positive integer!".to_string(),
-        });
+        }));
     }
 
     Ok(pow(n, k))

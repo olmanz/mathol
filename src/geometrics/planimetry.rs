@@ -60,7 +60,6 @@ impl Triangle
     pub fn get_outer_circle(&self) -> Circle {
         let s = self.get_perimeter() / 2.0;
         let r = (self.a * self.b * self.c) / (4.0 * (s * (s - self.a) * (s - self.b) * (s - self.c)).sqrt());
-        println!("a: {}, b: {}, c: {}, s: {}", self.a, self.b, self.c, s);
         Circle::build_circle(r)
     }
 }

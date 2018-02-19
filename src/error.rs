@@ -2,6 +2,21 @@ use std::fmt::{Display, Formatter, Error};
 use std::error;
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum MatholError {
+    NegativeValueCause(NegativeValueError),
+    EmptyVecCause(EmptyVectorError),
+    SummationCause(SummationError),
+    OutgrowCause(OutgrowError),
+    RangeCause(RangeError),
+    ComparisonCause(ComparisonError),
+    ContainsZeroCause(ContainsZeroError),
+    VectorCause(VectorError),
+    MatriceCause(MatriceError),
+    OutOfBoundsCause(OutOfBoundsError),
+    LengthCause(LengthError),
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct NegativeValueError {
     pub message: String,
 }
@@ -18,79 +33,6 @@ impl error::Error for NegativeValueError {
     }
 }
 
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct PermutationError {
-    pub message: String,
-}
-
-impl Display for PermutationError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl error::Error for PermutationError {
-    fn description(&self) -> &str {
-        &self.message
-    }
-}
-
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct CombinationError {
-    pub message: String,
-}
-
-impl Display for CombinationError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl error::Error for CombinationError {
-    fn description(&self) -> &str {
-        &self.message
-    }
-}
-
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct VariationError {
-    pub message: String,
-}
-
-impl Display for VariationError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl error::Error for VariationError {
-    fn description(&self) -> &str {
-        &self.message
-    }
-}
-
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct DistributionError {
-    pub message: String,
-}
-
-impl Display for DistributionError {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl error::Error for DistributionError {
-    fn description(&self) -> &str {
-        &self.message
-    }
-}
-
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct EmptyVectorError {
     pub message: String,
@@ -103,6 +45,95 @@ impl Display for EmptyVectorError {
 }
 
 impl error::Error for EmptyVectorError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct SummationError {
+    pub message: String
+}
+
+impl Display for SummationError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for SummationError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct OutgrowError {
+    pub message: String
+}
+
+impl Display for OutgrowError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for OutgrowError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RangeError {
+    pub message: String
+}
+
+impl Display for RangeError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for RangeError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ComparisonError {
+    pub message: String
+}
+
+impl Display for ComparisonError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for ComparisonError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ContainsZeroError {
+    pub message: String
+}
+
+impl Display for ContainsZeroError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for ContainsZeroError {
     fn description(&self) -> &str {
         &self.message
     }
@@ -144,19 +175,37 @@ impl error::Error for MatriceError {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct RowError {
+pub struct OutOfBoundsError {
     pub message: String,
-    pub columns: usize,
 }
 
-impl Display for RowError {
+impl Display for OutOfBoundsError {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}: {}", self.message, self.columns)
+        write!(f, "{}", self.message)
     }
 }
 
-impl error::Error for RowError {
+impl error::Error for OutOfBoundsError {
     fn description(&self) -> &str {
         &self.message
     }
 }
+
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LengthError {
+    pub message: String,
+}
+
+impl Display for LengthError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl error::Error for LengthError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+

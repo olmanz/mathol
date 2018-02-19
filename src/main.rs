@@ -1,9 +1,9 @@
 extern crate mathol;
-//use mathol::stochastics::probability::*;
-//use mathol::stochastics::distribution::*;
-use mathol::statistics::*;
+use mathol::matrices::matrice::Matrice;
+
 
 fn main() {
-    let n = get_span(&Vec::<f64>::new()).expect("error");
-    println!("Result: {:?}", n);
+    let m = Matrice::build_matrice(3, 3, vec![1, 1, -2, 1, -1, -2, 2, 3, -4]).unwrap();
+    let result = m.solve(&vec![0, 0, 0]).expect("error");
+    println!("{:?}", result);
 }

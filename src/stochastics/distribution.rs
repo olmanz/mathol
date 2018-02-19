@@ -5,7 +5,7 @@ use std::iter::Iterator;
 use std::f64::consts::PI;
 use basic::{pow, Convert};
 use stochastics::probability::{factorial, combination};
-use error::DistributionError;
+use error::*;
 
 
 /// Calculates the binomial distribution in dependency of n and p.
@@ -27,19 +27,19 @@ use error::DistributionError;
 /// vec.push(0.0000010000000000000004);
 /// assert_eq!(vec, binomial_distribution(6_i32, 0.1).unwrap());
 /// ```
-pub fn binomial_distribution<T, U>(n: T, p: U) -> Result<Vec<f64>, DistributionError>
+pub fn binomial_distribution<T, U>(n: T, p: U) -> Result<Vec<f64>, MatholError>
     where T: Zero + PrimInt + Integer + Product + Convert,
           U: One + Sub + Float + Convert
 {
     if n < T::one() {
-        return Err(DistributionError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if p < U::zero() || p > U::one() {
-        return Err(DistributionError {
+        return Err(MatholError::RangeCause(RangeError {
             message: "p must be in a range between 0 and 1!".to_string(),
-        });
+        }));
     }
 
     let q = U::one() - p;
@@ -78,33 +78,33 @@ pub fn binomial_distribution<T, U>(n: T, p: U) -> Result<Vec<f64>, DistributionE
 /// assert_eq!(vec, hypergeometric_distribution(12, 7, 4).unwrap());
 /// ```
 #[allow(non_snake_case)]
-pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Result<Vec<f64>, DistributionError>
+pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Result<Vec<f64>, MatholError>
     where T: PrimInt + Integer + Product + Sub + Convert
 {
     if N < T::one() {
-        return Err(DistributionError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter N must be a positive integer!".to_string(),
-        });
+        }));
     }
     if M < T::one() {
-        return Err(DistributionError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter M must be a positive integer!".to_string(),
-        });
+        }));
     }
     if n < T::one() {
-        return Err(DistributionError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter n must be a positive integer!".to_string(),
-        });
+        }));
     }
     if M > N {
-        return Err(DistributionError {
+        return Err(MatholError::ComparisonCause(ComparisonError {
             message: "Parameter M must be smaller than N!".to_string(),
-        });
+        }));
     }
     if n > N {
-        return Err(DistributionError {
+        return Err(MatholError::ComparisonCause(ComparisonError {
             message: "Parameter n must be smaller than N!".to_string(),
-        })
+        }));
     }
 
     let hypergeometric = range(T::zero(), n + T::one()).fold(Vec::new(), |mut vec, x| {
@@ -126,22 +126,22 @@ pub fn hypergeometric_distribution<T>(N: T, M: T, n: T) -> Result<Vec<f64>, Dist
 /// ```
 /// assert_eq!(0.015328310048810096, poisson_distribution(1, 4).unwrap());
 /// ```
-pub fn poisson_distribution<T>(my: T, x: T) -> Result<f64, DistributionError>
+pub fn poisson_distribution<T>(my: T, x: T) -> Result<f64, MatholError>
     where T: PrimInt + Integer + Product + Convert
 {
     if my <= T::zero() {
-        return Err(DistributionError {
-            message: "Parameter µ must be positive!".to_string(),
-        });
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
+            message: "Parameter µ must be a positive integer!".to_string(),
+        }));
     }
     if x < T::zero() {
-        return Err(DistributionError {
+        return Err(MatholError::NegativeValueCause(NegativeValueError {
             message: "Parameter x must be a positive Integer!".to_string(),
-        });
+        }));
     }
 
     let a = pow(my, x).to_f64();
-    let b = factorial(x).unwrap().to_f64();
+    let b = factorial(x)?.to_f64();
     let c = (my.to_f64() * (-1.0)).exp();
 
     Ok(a / b * c)
@@ -154,13 +154,13 @@ pub fn poisson_distribution<T>(my: T, x: T) -> Result<f64, DistributionError>
 /// ```
 /// assert_eq!(0.10648266850745075, gaussian_distribution(2, 3, 4).unwrap());
 /// ```
-pub fn gaussian_distribution<T>(my: T, sigma: T, x: T) -> Result<f64, DistributionError>
+pub fn gaussian_distribution<T>(my: T, sigma: T, x: T) -> Result<f64, MatholError>
     where T: Convert + Copy + Zero + PartialOrd
 {
     if sigma <= T::zero() {
-        return Err(DistributionError {
+        return Err(MatholError::ComparisonCause(ComparisonError {
             message: "Parameter \u{03c3} must be bigger than 0!".to_string(),
-        });
+        }));
     }
 
     let a = (2.0 * PI).sqrt() * sigma.to_f64();
@@ -195,13 +195,13 @@ pub fn standard_distribution<T>(x: T) -> f64
 /// ```
 /// assert_eq!(0.03663127777746836, exponential_distribution(2.0, 2.0).unwrap());
 /// ```
-pub fn exponential_distribution<T>(lambda: T, x: T) -> Result<f64, DistributionError>
+pub fn exponential_distribution<T>(lambda: T, x: T) -> Result<f64, MatholError>
     where T: Zero + Convert + PartialOrd + Copy
 {
     if lambda <= T::zero() {
-        return Err(DistributionError {
+        return Err(MatholError::ComparisonCause(ComparisonError {
             message: "Parameter \u{03bb} must be bigger than 0!".to_string(),
-        });
+        }));
     }
 
     if x < T::zero() {

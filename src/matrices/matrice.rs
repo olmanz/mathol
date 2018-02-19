@@ -4,7 +4,7 @@ use std::fmt::{Debug, Display};
 use basic::{pow, Convert};
 use matrices::solvable::Solvable;
 use matrices::vector_help::{add_gaussian, get_scalar_product_of_vectors, reduce_row};
-use error::{MatriceError, RowError};
+use error::*;
 
 /// A struct representing matrices
 #[derive(Clone, Debug, PartialEq)]
@@ -48,11 +48,11 @@ impl<T> Matrice<T>
     /// ```
     /// let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
     /// ```
-    pub fn build_matrice(rows: usize, columns: usize, data: Vec<T>) -> Result<Matrice<T>, MatriceError> {
+    pub fn build_matrice(rows: usize, columns: usize, data: Vec<T>) -> Result<Matrice<T>, MatholError> {
         if data.len() != rows * columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "Vector is not the same length as the product of rows and columns".to_string(),
-            });
+            }));
         }
 
         Ok(Matrice {
@@ -74,16 +74,16 @@ impl<T> Matrice<T>
     /// assert_eq!(Err("Row is out of bounds"), matrice.get_element(3, 2));
     /// assert_eq!(Err("Column is out of bounds"), matrice.get_element(2, 3));
     /// ```
-    pub fn get_element(&self, row: usize, column: usize) -> Result<T, MatriceError> {
+    pub fn get_element(&self, row: usize, column: usize) -> Result<T, MatholError> {
         if row >= self.rows {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Row is out of bounds".to_string(),
-            });
+            }));
         }
         if column >= self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Column is out of bounds".to_string(),
-            });
+            }));
         }
 
         Ok(self.data[self.columns * row + column].clone())
@@ -111,11 +111,11 @@ impl<T> Matrice<T>
     /// let matrice = Matrice::build_matrice(3, 3, vec![1, 2, 3, 4, 5, 6, 7, 8, 9]).unwrap();
     /// assert_eq!(Ok(15), matrice.get_trace());
     /// ```
-    pub fn get_trace(&self) -> Result<T, MatriceError> {
+    pub fn get_trace(&self) -> Result<T, MatholError> {
         if self.rows != self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The matrice is not quadratic".to_string(),
-            });
+            }));
         }
 
         let trace = (0..self.rows).fold(T::zero(), |sum, i| sum + self.get_element(i, i).unwrap());
@@ -135,11 +135,11 @@ impl<T> Matrice<T>
     /// let m3 = m1.add_matrice(&m2).unwrap();
     /// assert_eq!(vec![6, 6, 0, 3, 4, 15], m3.data);
     /// ```
-    pub fn add_matrice(&self, matrice: &Matrice<T>) -> Result<Matrice<T>, MatriceError> {
+    pub fn add_matrice(&self, matrice: &Matrice<T>) -> Result<Matrice<T>, MatholError> {
         if self.rows != matrice.rows || self.columns != matrice.columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The two matrices do not have the same number of rows or columns".to_string(),
-            });
+            }));
         }
 
         let result = Matrice {
@@ -167,11 +167,11 @@ impl<T> Matrice<T>
     /// let m3 = m1.subtract_matrice(&m2).unwrap();
     /// assert_eq!(vec![-4, 4, -6, 5, -4, 1], m3.data);
     /// ```
-    pub fn subtract_matrice(&self, matrice: &Matrice<T>) -> Result<Matrice<T>, MatriceError> {
+    pub fn subtract_matrice(&self, matrice: &Matrice<T>) -> Result<Matrice<T>, MatholError> {
         if self.rows != matrice.rows || self.columns != matrice.columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The two matrices do not have the same number of rows or columns".to_string(),
-            });
+            }));
         }
 
         let result = Matrice {
@@ -217,11 +217,11 @@ impl<T> Matrice<T>
     /// assert_eq!(Ok(vec![-3, 2, 5]), a.get_row(2));
     /// assert_eq!(Err("Row is out of bounds"), a.get_row(3));
     /// ```
-    pub fn get_row(&self, row: usize) -> Result<Vec<T>, MatriceError> {
+    pub fn get_row(&self, row: usize) -> Result<Vec<T>, MatholError> {
         if row >= self.rows {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Row is out of bounds".to_string(),
-            });
+            }));
         }
 
         let start = self.columns * row;
@@ -240,11 +240,11 @@ impl<T> Matrice<T>
     /// assert_eq!(Ok(vec![1, 5, 8]), b.get_column(2));
     /// assert_eq!(Err("Column is out of bounds"), b.get_column(3));
     /// ```
-    pub fn get_column(&self, column: usize) -> Result<Vec<T>, MatriceError> {
+    pub fn get_column(&self, column: usize) -> Result<Vec<T>, MatholError> {
         if column >= self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Column is out of bounds".to_string(),
-            });
+            }));
         }
 
         let vec = (0..self.rows).fold(Vec::new(), |mut vec, i| {
@@ -265,12 +265,11 @@ impl<T> Matrice<T>
     /// assert_eq!(3, m.rows);
     /// assert_eq!(vec![1, 2, 3, 4, 5, 6], m.data);
     /// ```
-    pub fn insert_row(&mut self, row: &Vec<T>) -> Result<(), RowError> {
+    pub fn insert_row(&mut self, row: &Vec<T>) -> Result<(), MatholError> {
         if row.len() != self.columns {
-            return Err(RowError {
-                message: "Row must have this number of columns: ".to_string(),
-                columns: self.columns,
-            });
+            return Err(MatholError::LengthCause(LengthError {
+                message: format!("Row must have {} columns", self.columns),
+            }));
         }
 
         self.data = [self.data.clone(), row[..].to_vec()].concat();
@@ -288,9 +287,11 @@ impl<T> Matrice<T>
     /// assert_eq!(3, m.columns);
     /// assert_eq!(vec![1, 2, 5, 3, 4, 6], m.data);
     /// ```
-    pub fn insert_column(&mut self, column: &Vec<T>) {
+    pub fn insert_column(&mut self, column: &Vec<T>) -> Result<(), MatholError> {
         if column.len() != self.rows {
-            panic!("Column must have {} rows", self.rows);
+            return Err(MatholError::LengthCause(LengthError {
+                message: format!("Column must have {} rows", self.rows),
+            }));
         }
 
         column.iter().fold(0, |j, k| {
@@ -299,6 +300,7 @@ impl<T> Matrice<T>
         });
 
         self.columns += 1;
+        Ok(())
     }
 
     /// Calculates the scalar product of two vectors
@@ -319,18 +321,18 @@ impl<T> Matrice<T>
     /// let b = Matrice::build_matrice(3, 3, vec![3, 0, 1, -2, 1, 5, 2, 3, 8]).unwrap();
     /// assert_eq!(vec![-9, -2, 5, 0, 4, 13, -3, 17, 47], a.multiply_with_matrice(&b).unwrap().data);
     /// ```
-    pub fn multiply_with_matrice(&self, other: &Matrice<T>) -> Result<Matrice<T>, MatriceError> {
+    pub fn multiply_with_matrice(&self, other: &Matrice<T>) -> Result<Matrice<T>, MatholError> {
         if self.columns != other.rows {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "Matrix A must have the same number of columns as Matrix B has number of rows".to_string(),
-            });
+            }));
         }
 
         let mut data = Vec::new();
 
         for i in 0..self.rows {
             for k in 0..other.columns {
-                data.push(get_scalar_product_of_vectors(&self.get_row(i).unwrap(), &other.get_column(k).unwrap()));
+                data.push(get_scalar_product_of_vectors(&self.get_row(i)?, &other.get_column(k)?));
             }
         }
 
@@ -355,11 +357,11 @@ impl<T> Matrice<T>
     /// assert_eq!(Ok(-12), m.get_main_diagonal_product(1));
     /// assert_eq!(Ok(30), m.get_main_diagonal_product(2));
     /// ```
-    pub fn get_main_diagonal_product(&self, mut column: usize) -> Result<T, MatriceError> {
+    pub fn get_main_diagonal_product(&self, mut column: usize) -> Result<T, MatholError> {
         if column >= self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Column is out of bounds".to_string(),
-            });
+            }));
         }
 
         let prod = (0..self.rows).fold(T::one(), |prod, i| {
@@ -384,11 +386,11 @@ impl<T> Matrice<T>
     /// assert_eq!(Ok(5), m.get_side_diagonal_product(1));
     /// assert_eq!(Ok(-4), m.get_side_diagonal_product(2));
     /// ```
-    pub fn get_side_diagonal_product(&self, mut column: usize) -> Result<T, MatriceError> {
+    pub fn get_side_diagonal_product(&self, mut column: usize) -> Result<T, MatholError> {
         if column >= self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::OutOfBoundsCause(OutOfBoundsError {
                 message: "Column is out of bounds".to_string(),
-            });
+            }));
         }
 
         let prod = (0..self.rows).rev().fold(T::one(), |prod, i| {
@@ -411,14 +413,14 @@ impl<T> Matrice<T>
     /// let m = Matrice::build_matrice(2, 2, vec![4, 7, -3, 8]).unwrap();
     /// assert_eq!(Ok(53), m.get_determinant());
     /// ```
-    pub fn get_determinant(&self) -> Result<T, MatriceError> {
+    pub fn get_determinant(&self) -> Result<T, MatholError> {
         if self.rows != self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The matrice is not quadratic".to_string(),
-            });
+            }));
         }
         if self.rows == 2 {
-            return Ok(self.get_main_diagonal_product(0).unwrap() - self.get_side_diagonal_product(0).unwrap());
+            return Ok(self.get_main_diagonal_product(0)? - self.get_side_diagonal_product(0)?);
         }
         if self.rows == 3 {
             let (m, s) = (0..self.columns).fold((T::zero(), T::zero()), |(m, s), i| {
@@ -495,18 +497,18 @@ impl<T> Matrice<T>
     /// let m = Matrice::build_matrice(3, 3, vec![1, 0, -1, -8, 4, 1, -2, 1, 0]).unwrap();
     /// assert_eq!(vec![1, 1, -4, 2, 2, -7, 0, 1, -4], m.get_inverse_matrice().unwrap().data);
     /// ```
-    pub fn get_inverse_matrice(&self) -> Result<Matrice<T>, MatriceError> {
+    pub fn get_inverse_matrice(&self) -> Result<Matrice<T>, MatholError> {
         if self.rows != self.columns {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The matrice is not quadratic".to_string(),
-            });
+            }));
         }
         let mut matrice = Matrice::build_empty_matrice(self.rows, self.columns);
 
         for i in 0..self.rows {
             for k in 0..self.columns {
-                let det = self.get_submatrice(i, k).get_determinant().unwrap() * FromPrimitive::from_i32(pow(-1, i + k)).unwrap();
-                matrice.insert_element(det / self.get_determinant().unwrap(), k, i);
+                let det = self.get_submatrice(i, k).get_determinant()? * FromPrimitive::from_i32(pow(-1, i + k)).unwrap();
+                matrice.insert_element(det / self.get_determinant()?, k, i);
             }
         }
 
@@ -523,7 +525,7 @@ impl<T> Matrice<T>
     /// let m = Matrice::build_matrice(2, 3, vec![2, 3, 1, 0, 4, 2]).unwrap();
     /// assert_eq!(Ok(2), m.get_rank());
     /// ```
-    pub fn get_rank(&self) -> Result<usize, MatriceError> {
+    pub fn get_rank(&self) -> Result<usize, MatholError> {
         let r = if self.rows <= self.columns {
             self.rows
         } else {
@@ -533,15 +535,15 @@ impl<T> Matrice<T>
         for p in (1..r+1).rev() {
             let submatrices = self.cut_matrices(p);
             for submatrice in submatrices.iter() {
-                if submatrice.get_determinant().unwrap() != T::zero() {
+                if submatrice.get_determinant()? != T::zero() {
                     return Ok(p);
                 }
             }
         }
 
-        Err(MatriceError {
+        Err(MatholError::MatriceCause(MatriceError {
             message: "Could not calculate rank of matrice".to_string(),
-        })
+        }))
     }
 
     /// A helper function for get_rank()
@@ -585,7 +587,7 @@ impl<T> Matrice<T>
     /// ```
     pub fn is_solvable(&self, c: &Vec<T>) -> Solvable {
         let mut ac = self.clone();
-        ac.insert_column(&c);
+        ac.insert_column(&c).unwrap();
 
         if self.rows != self.columns {
             if self.get_rank().unwrap() == ac.get_rank().unwrap() {
@@ -635,11 +637,11 @@ impl<T> Matrice<T>
         (shuffled_vec, d)
     }
 
-    pub fn solve(&self, c: &Vec<T>) -> Result<(Vec<Vec<f64>>, Vec<f64>), MatriceError> {
+    pub fn solve(&self, c: &Vec<T>) -> Result<(Vec<Vec<f64>>, Vec<f64>), MatholError> {
         if self.is_solvable(&c) != Solvable::OneSolution {
-            return Err(MatriceError {
+            return Err(MatholError::MatriceCause(MatriceError {
                 message: "The linear system is not solvable or it has infinite solutions".to_string(),
-            });
+            }));
         }
 
         let (a, d) = self.shuffle(c);
