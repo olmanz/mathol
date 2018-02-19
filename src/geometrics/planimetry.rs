@@ -9,6 +9,7 @@ use std::fmt::Debug;
 use vectoroperations::vector2d::Vector2D;
 use num::{Num, FromPrimitive};
 use geometrics::traits::{Area, Perimeter, Height, Diagonal};
+use error::*;
 
 #[allow(non_snake_case)]
 #[derive(Debug, Copy, Clone)]
@@ -20,11 +21,18 @@ pub struct Triangle {
 
 impl Triangle
 {
-    pub fn build_triangle_with_edges<T>(a: T, b: T, c: T) -> Result<Triangle, &'static str>
+    pub fn build_triangle_with_edges<T>(a: T, b: T, c: T) -> Result<Triangle, MatholError>
         where T: Num + Convert + Add<Output=T> + PartialOrd + Copy
     {
+        if a <= T::zero() || b <= T::zero() || c <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Length of triangle edges must be positive".to_string(),
+            }))
+        }
         if a + b <= c || a + c <= b || b + c <= a {
-            return Err("Cannot create triangle with the given edges");
+            return Err(MatholError::LengthCause(LengthError {
+                message: "Cannot create a triangle with the given edges".to_string(),
+            }));
         }
 
         let triangle = Triangle {
@@ -37,7 +45,7 @@ impl Triangle
     }
 
     #[allow(non_snake_case)]
-    pub fn build_triangle_with_points<T>(A: Vector2D<T>, B: Vector2D<T>, C: Vector2D<T>) -> Result<Triangle, &'static str>
+    pub fn build_triangle_with_points<T>(A: Vector2D<T>, B: Vector2D<T>, C: Vector2D<T>) -> Result<Triangle, MatholError>
         where T: Num + Convert + Add<Output=T> + PartialOrd + Copy + Amount<T> + Debug + FromPrimitive
     {
         let a = B.get_distance(C);
@@ -55,13 +63,13 @@ impl Triangle
         (alpha.to_degrees(), beta.to_degrees(), gamma.to_degrees())
     }
 
-    pub fn get_inner_circle(self) -> Circle {
+    pub fn get_inner_circle(self) -> Result<Circle, MatholError> {
         let s = self.get_perimeter() / 2.0;
         let r = ((s - self.a) * (s - self.b) * (s - self.c) / s).sqrt();
         Circle::build_circle(r)
     }
 
-    pub fn get_outer_circle(self) -> Circle {
+    pub fn get_outer_circle(self) -> Result<Circle, MatholError> {
         let s = self.get_perimeter() / 2.0;
         let r = (self.a * self.b * self.c) / (4.0 * (s * (s - self.a) * (s - self.b) * (s - self.c)).sqrt());
         Circle::build_circle(r)
@@ -95,13 +103,19 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn build_rectangle<T>(a: T, b: T) -> Rectangle
-        where T: Num + Convert
+    pub fn build_rectangle<T>(a: T, b: T) -> Result<Rectangle, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Rectangle {
+        if a <= T::zero() || b <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Rectangle must have a positive length or width".to_string(),
+            }));
+        }
+
+        Ok(Rectangle {
             a: a.to_f64(),
             b: b.to_f64(),
-        }
+        })
     }
 }
 
@@ -132,14 +146,20 @@ pub struct Parallelogram {
 }
 
 impl Parallelogram {
-    pub fn build_parallelogram<T>(a: T, b: T, h: T) -> Parallelogram
-        where T: Num + Convert
+    pub fn build_parallelogram<T>(a: T, b: T, h: T) -> Result<Parallelogram, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Parallelogram {
+        if a <= T::zero() || b <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Parallelogram must have a positive length, width or height".to_string(),
+            }));
+        }
+
+        Ok(Parallelogram {
             a: a.to_f64(),
             b: b.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -165,15 +185,21 @@ pub struct Trapeze {
 }
 
 impl Trapeze {
-    pub fn build_trapeze<T>(a: T, b: T, c: T, d: T) -> Trapeze
-        where T: Num + Convert
+    pub fn build_trapeze<T>(a: T, b: T, c: T, d: T) -> Result<Trapeze, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Trapeze {
+        if a <= T::zero() || b <= T::zero() || c <= T::zero() || d <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Trapeze edges must have a positive length".to_string(),
+            }));
+        }
+
+        Ok(Trapeze {
             a: a.to_f64(),
             b: b.to_f64(),
             c: c.to_f64(),
             d: d.to_f64(),
-        }
+        })
     }
 }
 
@@ -205,13 +231,24 @@ pub struct Polygon {
 }
 
 impl Polygon {
-    pub fn build_polygon<T>(a: T, n: T) -> Polygon
-        where T: Num + Convert
+    pub fn build_polygon<T>(a: T, n: T) -> Result<Polygon, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Polygon {
+        if a <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Polygon edges must have a positive length".to_string(),
+            }));
+        }
+        if n <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Polygon must have a positive number of edges".to_string(),
+            }));
+        }
+
+        Ok(Polygon {
             a: a.to_f64(),
             n: n.to_f64(),
-        }
+        })
     }
 
     pub fn get_radius(&self) -> f64 {
@@ -240,12 +277,18 @@ pub struct Circle {
 }
 
 impl Circle {
-    pub fn build_circle<T>(r: T) -> Circle
-        where T: Num + Convert
+    pub fn build_circle<T>(r: T) -> Result<Circle, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Circle {
-            r: r.to_f64(),
+        if r <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Circle radius must be positive".to_string(),
+            }))
         }
+
+        Ok(Circle {
+            r: r.to_f64(),
+        })
     }
 }
 
@@ -269,13 +312,19 @@ pub struct Ellipsis {
 }
 
 impl Ellipsis {
-    pub fn build_ellipsis<T>(a: T, b: T) -> Ellipsis
-        where T: Num + Convert
+    pub fn build_ellipsis<T>(a: T, b: T) -> Result<Ellipsis, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Ellipsis {
+        if a <= T::zero() || b <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Ellipsis must have a positive length or width".to_string(),
+            }))
+        }
+
+        Ok(Ellipsis {
             a: a.to_f64(),
             b: b.to_f64(),
-        }
+        })
     }
 }
 

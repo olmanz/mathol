@@ -1,6 +1,6 @@
 extern crate mathol;
 use mathol::basics::pow::pow;
-use mathol::geometrics::planimetry::{Triangle, Rectangle, Parallelogram, Trapeze, Circle, Ellipsis};
+use mathol::geometrics::planimetry::{Triangle, Rectangle, Parallelogram, Trapeze, Polygon, Circle, Ellipsis};
 use mathol::geometrics::stereometry::{Cuboid, Pyramid, Wedge, Cylinder, Cone, Sphere, Ellipsoid, SphericBarrel, ParabolicBarrel, Torus};
 use mathol::geometrics::traits::*;
 use mathol::stochastics::probability::{factorial, permutation, combination, combination_with_repetition, variation, variation_with_repetition};
@@ -25,16 +25,28 @@ fn test_pow() {
 
 #[test]
 fn test_triangle_1() {
-    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).expect("error");
     assert_eq!(6.0 , triangle.get_area());
 }
 
 #[test]
 fn test_triangle_2() {
-    let triangle = Triangle::build_triangle_with_points(Vector2D{x: 1, y:2}, Vector2D{x: 6, y:2}, Vector2D{x: 3, y:4}).unwrap();
+    let triangle = Triangle::build_triangle_with_points(Vector2D{x: 1, y:2}, Vector2D{x: 6, y:2}, Vector2D{x: 3, y:4}).expect("error");
     assert_eq!(3.605551275463989, triangle.a);
     assert_eq!(2.8284271247461903, triangle.b);
     assert_eq!(5.0, triangle.c);
+}
+
+#[test]
+#[should_panic(expected="Length of triangle edges must be positive")]
+fn test_triangle_panic_1() {
+    let triangle = Triangle::build_triangle_with_edges(-3, 4, 5).expect("error");
+}
+
+#[test]
+#[should_panic(expected="Cannot create a triangle with the given edges")]
+fn test_triangle_panic_2() {
+    let triangle = Triangle::build_triangle_with_edges(1, 2, 5).expect("error");
 }
 
 #[test]
@@ -60,216 +72,340 @@ fn get_triangle_height() {
 
 #[test]
 fn get_triangle_inner_circle() {
-    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
-    let circle = triangle.get_inner_circle();
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).expect("error");
+    let circle = triangle.get_inner_circle().expect("error");
     assert_eq!(1.0, circle.r);
 }
 
 #[test]
 fn get_triangle_outer_circle() {
-    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).unwrap();
-    let circle = triangle.get_outer_circle();
+    let triangle = Triangle::build_triangle_with_edges(3, 4, 5).expect("error");
+    let circle = triangle.get_outer_circle().expect("error");;
     assert_eq!(2.5, circle.r);
 }
 
 #[test]
 fn get_rectangle_diagonal() {
-    let rectangle = Rectangle::build_rectangle(4, 9);
+    let rectangle = Rectangle::build_rectangle(4, 9).expect("error");
     assert_eq!(9.848857801796104, rectangle.get_diagonal());
 }
 
 #[test]
 fn get_rectangle_area() {
-    let rectangle = Rectangle::build_rectangle(4, 9);
+    let rectangle = Rectangle::build_rectangle(4, 9).expect("error");
     assert_eq!(36.0, rectangle.get_area());
 }
 
 #[test]
 fn get_rectangle_perimeter() {
-    let rectangle = Rectangle::build_rectangle(4, 9);
+    let rectangle = Rectangle::build_rectangle(4, 9).expect("error");
     assert_eq!(26.0, rectangle.get_perimeter());
 }
 
-//#[test]
-//fn get_parallelogram_diagonals() {
-//    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
-//    let (d1, d2) = parallelogram.get_diagonals();
-//    assert_eq!(12.649110640673518, d1);
-//    assert_eq!(7.211102550927978, d2);
-//}
+#[test]
+#[should_panic(expected="Rectangle must have a positive length or width")]
+fn get_rectangle_panic() {
+    let rectangle = Rectangle::build_rectangle(4, -9).expect("error");
+}
 
 #[test]
 fn get_parallelogram_area() {
-    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
+    let parallelogram = Parallelogram::build_parallelogram(9,5, 4).expect("error");
     assert_eq!(36.0, parallelogram.get_area());
 }
 
 #[test]
 fn get_parallelogram_perimeter() {
-    let parallelogram = Parallelogram::build_parallelogram(9,5, 4);
+    let parallelogram = Parallelogram::build_parallelogram(9,5, 4).expect("error");
     assert_eq!(28.0, parallelogram.get_perimeter());
 }
 
 #[test]
+#[should_panic(expected="Parallelogram must have a positive length, width or height")]
+fn get_parallelogram_panic() {
+    let parallelogram = Parallelogram::build_parallelogram(9,-5, 4).expect("error");
+}
+
+#[test]
 fn get_trapeze_height() {
-    let trapeze = Trapeze::build_trapeze(9.0, 6.0, 4.2, 4.5);
+    let trapeze = Trapeze::build_trapeze(9.0, 6.0, 4.2, 4.5).expect("error");
     assert_eq!(4.062729993489599, trapeze.get_height());
 }
 
 #[test]
+fn get_trapeze_area() {
+    let trapeze = Trapeze::build_trapeze(9.0, 6.0, 4.2, 4.5).expect("error");
+    assert_eq!(30.470474951171994, trapeze.get_area());
+}
+
+#[test]
+fn get_trapeze_perimeter() {
+    let trapeze = Trapeze::build_trapeze(9.0, 6.0, 4.2, 4.5).expect("error");
+    assert_eq!(23.7, trapeze.get_perimeter());
+}
+
+#[test]
+#[should_panic(expected="Trapeze edges must have a positive length")]
+fn get_trapeze_panic() {
+    let trapeze = Trapeze::build_trapeze(-9.0, 6.0, 4.2, 4.5).expect("error");
+}
+
+#[test]
+fn get_polygon_area() {
+    let polygon = Polygon::build_polygon(2, 8).expect("error");
+    assert_eq!(19.31370849898476, polygon.get_area());
+}
+
+#[test]
+fn get_polygon_perimeter() {
+    let polygon = Polygon::build_polygon(2, 8).expect("error");
+    assert_eq!(16.0, polygon.get_perimeter());
+}
+
+#[test]
+fn get_polygon_radius() {
+    let polygon = Polygon::build_polygon(2, 8).expect("error");
+    assert_eq!(2.613125929752753, polygon.get_radius());
+}
+
+#[test]
+#[should_panic(expected="Polygon edges must have a positive length")]
+fn get_polygon_panic_1() {
+    let polygon = Polygon::build_polygon(-2, 8).expect("error");
+}
+
+#[test]
+#[should_panic(expected="Polygon must have a positive number of edges")]
+fn get_polygon_panic_2() {
+    let polygon = Polygon::build_polygon(2, -8).expect("error");
+}
+
+#[test]
 fn get_circle_area() {
-    let circle = Circle::build_circle(2);
+    let circle = Circle::build_circle(2).expect("error");
     assert_eq!(12.566370614359172, circle.get_area());
 }
 
 #[test]
 fn get_circle_perimeter() {
-    let circle = Circle::build_circle(2);
+    let circle = Circle::build_circle(2).expect("error");
     assert_eq!(12.566370614359172, circle.get_perimeter());
 }
 
 #[test]
+#[should_panic(expected="Circle radius must be positive")]
+fn get_circle_panic() {
+    let circle = Circle::build_circle(-2).expect("error");
+}
+
+#[test]
 fn get_ellipsis_area() {
-    let ellipsis = Ellipsis::build_ellipsis(2, 3);
+    let ellipsis = Ellipsis::build_ellipsis(2, 3).expect("error");
     assert_eq!(18.84955592153876, ellipsis.get_area());
 }
 
 #[test]
 fn get_ellipsis_perimeter() {
-    let ellipsis = Ellipsis::build_ellipsis(2, 3);
+    let ellipsis = Ellipsis::build_ellipsis(2, 3).expect("error");
     assert_eq!(15.866645920952264, ellipsis.get_perimeter());
 }
 
 #[test]
+#[should_panic(expected="Ellipsis must have a positive length or width")]
+fn get_ellipsis_panic() {
+    let ellipsis = Ellipsis::build_ellipsis(2, -3).expect("error");
+}
+
+#[test]
 fn get_cuboid_diagonal_1() {
-    let cuboid = Cuboid::build_cuboid(4, 4, 4);
+    let cuboid = Cuboid::build_cuboid(4, 4, 4).expect("error");
     assert_eq!(6.928203230275509, cuboid.get_diagonal());
 }
 
 #[test]
 fn get_cuboid_diagonal_2() {
-    let cuboid = Cuboid::build_cuboid(1, 4, 9);
+    let cuboid = Cuboid::build_cuboid(1, 4, 9).expect("error");
     assert_eq!(9.899494936611665, cuboid.get_diagonal());
 }
 
 #[test]
 fn get_cuboid_volume_1() {
-    let cuboid = Cuboid::build_cuboid(4, 4, 4);
+    let cuboid = Cuboid::build_cuboid(4, 4, 4).expect("error");
     assert_eq!(64.0, cuboid.get_volume());
 }
 
 #[test]
 fn get_cuboid_volume_2() {
-    let cuboid = Cuboid::build_cuboid(1, 4, 9);
+    let cuboid = Cuboid::build_cuboid(1, 4, 9).expect("error");
     assert_eq!(36.0, cuboid.get_volume());
 }
 
 #[test]
 fn get_cuboid_surface_1() {
-    let cuboid = Cuboid::build_cuboid(4, 4, 4);
+    let cuboid = Cuboid::build_cuboid(4, 4, 4).expect("error");
     assert_eq!(96.0, cuboid.get_surface())
 }
 
 #[test]
 fn get_cuboid_surface_2() {
-    let cuboid = Cuboid::build_cuboid(1, 4, 9);
+    let cuboid = Cuboid::build_cuboid(1, 4, 9).expect("error");
     assert_eq!(98.0, cuboid.get_surface())
 }
 
 #[test]
+#[should_panic(expected="Cuboid must have a positive length, width or height")]
+fn get_cuboid_panic() {
+    let cuboid = Cuboid::build_cuboid(-1, 4, 9).expect("error");
+}
+
+#[test]
 fn get_pyramid_volume() {
-    let pyramid = Pyramid::build_pyramid(5, 7);
+    let pyramid = Pyramid::build_pyramid(5, 7).expect("error");
     assert_eq!(11.666666666666666, pyramid.get_volume())
 }
 
-//#[test]
-//fn get_pyramid_surface() {
-//    let pyramid = Pyramid::build_pyramid(3, 3,7);
-//    assert_eq!(35.63727027127824, pyramid.get_surface())
-//}
+#[test]
+#[should_panic(expected="Pyramid must have a positive area or height")]
+fn get_pyramid_panic() {
+    let pyramid = Pyramid::build_pyramid(5, -7).expect("error");
+}
 
 #[test]
 fn get_wedge_volume() {
-    let wedge = Wedge::build_wedge(5, 2, 3, 7);
+    let wedge = Wedge::build_wedge(5, 2, 3, 7).expect("error");
     assert_eq!(30.33333333333333, wedge.get_volume());
 }
 
 #[test]
+#[should_panic(expected="Wedge must have a positive length, width or height")]
+fn get_wedge_panic() {
+    let wedge = Wedge::build_wedge(5, 2, -3, 7).expect("error");
+}
+
+#[test]
 fn get_cylinder_volume() {
-    let cylinder = Cylinder::build_cylinder(2, 8);
+    let cylinder = Cylinder::build_cylinder(2, 8).expect("error");
     assert_eq!(100.53096491487338, cylinder.get_volume());
 }
 
 #[test]
 fn get_cylinder_surface() {
-    let cylinder = Cylinder::build_cylinder(2, 8);
+    let cylinder = Cylinder::build_cylinder(2, 8).expect("error");
     assert_eq!(125.66370614359172, cylinder.get_surface());
 }
 
 #[test]
 fn get_cylinder_lateral() {
-    let cylinder = Cylinder::build_cylinder(2, 8);
+    let cylinder = Cylinder::build_cylinder(2, 8).expect("error");
     assert_eq!(100.53096491487338, cylinder.get_lateral());
 }
 
 #[test]
+#[should_panic(expected="Cylinder must have a positive radius or height")]
+fn get_cylinder_panic() {
+    let cylinder = Cylinder::build_cylinder(-2, 8).expect("error");
+}
+
+#[test]
 fn get_cone_volume() {
-    let cone = Cone::build_cone(3, 7);
+    let cone = Cone::build_cone(3, 7).expect("error");
     assert_eq!(65.97344572538566, cone.get_volume());
 }
 
 #[test]
 fn get_cone_surface() {
-    let cone = Cone::build_cone(3, 7);
+    let cone = Cone::build_cone(3, 7).expect("error");
     assert_eq!(100.05130440467447, cone.get_surface());
 }
 
 #[test]
 fn get_cone_lateral() {
-    let cone = Cone::build_cone(3, 7);
+    let cone = Cone::build_cone(3, 7).expect("error");
     assert_eq!(71.77697052236633, cone.get_lateral());
 }
 
 #[test]
+#[should_panic(expected="Cone must have a positive radius or height")]
+fn get_cone_panic() {
+    let cone = Cone::build_cone(3, -7).expect("error");
+}
+
+#[test]
 fn get_sphere_volume() {
-    let sphere = Sphere::build_sphere(4);
+    let sphere = Sphere::build_sphere(4).expect("error");
     assert_eq!(268.082573106329, sphere.get_volume());
 }
 
 #[test]
 fn get_sphere_surface() {
-    let sphere = Sphere::build_sphere(4);
+    let sphere = Sphere::build_sphere(4).expect("error");
     assert_eq!(201.06192982974676, sphere.get_surface());
 }
 
 #[test]
+#[should_panic(expected="Sphere must have a positive radius")]
+fn get_sphere_panic() {
+    let sphere = Sphere::build_sphere(-4).expect("error");
+}
+
+#[test]
 fn get_ellipsoid_volume() {
-    let ellipsoid = Ellipsoid::build_ellipsoid(2, 3, 4);
+    let ellipsoid = Ellipsoid::build_ellipsoid(2, 3, 4).expect("error");
     assert_eq!(100.53096491487338, ellipsoid.get_volume());
 }
 
 #[test]
+#[should_panic(expected="Ellipsoid must have a positive length, width or height")]
+fn get_ellipsoid_panic() {
+    let ellipsoid = Ellipsoid::build_ellipsoid(2, -3, 4).expect("error");
+}
+
+#[test]
 fn get_spheric_barrel_volume() {
-    let barrel = SphericBarrel::build_barrel(4, 2, 6);
+    let barrel = SphericBarrel::build_barrel(4, 2, 6).expect("error");
     assert_eq!(56.548667764616276, barrel.get_volume());
 }
 
 #[test]
+#[should_panic(expected="Barrel must have a positive radius or height")]
+fn get_spheric_barrel_panic() {
+    let barrel = SphericBarrel::build_barrel(-4, 2, 6).expect("error");
+}
+
+#[test]
 fn get_parabolic_barrel_volume() {
-    let barrel = ParabolicBarrel::build_barrel(4, 2, 6);
+    let barrel = ParabolicBarrel::build_barrel(4, 2, 6).expect("error");
     assert_eq!(54.03539364174444, barrel.get_volume());
 }
 
 #[test]
+#[should_panic(expected="Barrel must have a positive radius or height")]
+fn get_parabolic_barrel_panic() {
+    let barrel = ParabolicBarrel::build_barrel(-4, 2, 6).expect("error");
+}
+
+#[test]
 fn get_torus_volume() {
-    let torus = Torus::build_torus(8, 2);
+    let torus = Torus::build_torus(8, 2).expect("error");
     assert_eq!(157.91367041742973, torus.get_volume());
 }
 
 #[test]
 fn get_torus_surface() {
-    let torus = Torus::build_torus(8, 2);
+    let torus = Torus::build_torus(8, 2).expect("error");
     assert_eq!(315.82734083485946, torus.get_surface());
+}
+
+#[test]
+#[should_panic(expected="Torus must have a positive radius")]
+fn get_torus_panic_1() {
+    let torus = Torus::build_torus(-8, 2).expect("error");
+}
+
+#[test]
+#[should_panic(expected="R must be bigger than r")]
+fn get_torus_panic_2() {
+    let torus = Torus::build_torus(2, 8).expect("error");
 }
 
 #[test]

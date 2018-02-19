@@ -4,6 +4,8 @@ use basics::pow::pow;
 use basics::convert_trait::Convert;
 use num::Num;
 use geometrics::traits::*;
+use std::cmp::PartialOrd;
+use error::*;
 
 
 #[derive(Debug, Copy, Clone)]
@@ -14,14 +16,20 @@ pub struct Cuboid {
 }
 
 impl Cuboid {
-    pub fn build_cuboid<T>(a: T, b: T, c: T) -> Cuboid
-        where T: Num + Convert
+    pub fn build_cuboid<T>(a: T, b: T, c: T) -> Result<Cuboid, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Cuboid {
+        if a <= T::zero() || b <= T::zero() || c <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Cuboid must have a positive length, width or height".to_string(),
+            }));
+        }
+
+        Ok(Cuboid {
             a: a.to_f64(),
             b: b.to_f64(),
             c: c.to_f64(),
-        }
+        })
     }
 }
 
@@ -51,13 +59,19 @@ pub struct Pyramid {
 }
 
 impl Pyramid {
-    pub fn build_pyramid<T>(area: T, h: T) -> Pyramid
-        where T: Num + Convert
+    pub fn build_pyramid<T>(area: T, h: T) -> Result<Pyramid, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Pyramid {
+        if area <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Pyramid must have a positive area or height".to_string()
+            }));
+        }
+
+        Ok(Pyramid {
             area: area.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -77,15 +91,21 @@ pub struct Wedge {
 }
 
 impl Wedge {
-    pub fn build_wedge<T>(a: T, b: T, c: T, h: T) -> Wedge
-        where T: Num + Convert
+    pub fn build_wedge<T>(a: T, b: T, c: T, h: T) -> Result<Wedge, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Wedge {
+        if a <= T::zero() || b <= T::zero() || c <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Wedge must have a positive length, width or height".to_string(),
+            }))
+        }
+
+        Ok(Wedge {
             a: a.to_f64(),
             b: b.to_f64(),
             c: c.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -103,13 +123,19 @@ pub struct Cylinder {
 }
 
 impl Cylinder {
-    pub fn build_cylinder<T>(r: T, h: T) -> Cylinder
-        where T: Num + Convert
+    pub fn build_cylinder<T>(r: T, h: T) -> Result<Cylinder, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Cylinder {
+        if r <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Cylinder must have a positive radius or height".to_string(),
+            }));
+        }
+
+        Ok(Cylinder {
             r: r.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -139,13 +165,19 @@ pub struct Cone {
 }
 
 impl Cone {
-    pub fn build_cone<T>(r: T, h: T) -> Cone
-        where T: Num + Convert
+    pub fn build_cone<T>(r: T, h: T) -> Result<Cone, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Cone {
+        if r <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Cone must have a positive radius or height".to_string(),
+            }));
+        }
+
+        Ok(Cone {
             r: r.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -176,12 +208,18 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn build_sphere<T>(r: T) -> Sphere
-        where T: Num + Convert
+    pub fn build_sphere<T>(r: T) -> Result<Sphere, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Sphere {
-            r: r.to_f64(),
+        if r <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Sphere must have a positive radius".to_string(),
+            }));
         }
+
+        Ok(Sphere {
+            r: r.to_f64(),
+        })
     }
 }
 
@@ -206,14 +244,20 @@ pub struct Ellipsoid {
 }
 
 impl Ellipsoid {
-    pub fn build_ellipsoid<T>(a: T, b: T, c: T) -> Ellipsoid
-        where T: Num + Convert
+    pub fn build_ellipsoid<T>(a: T, b: T, c: T) -> Result<Ellipsoid, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Ellipsoid {
+        if a <= T::zero() || b <= T::zero() || c <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Ellipsoid must have a positive length, width or height".to_string(),
+            }));
+        }
+
+        Ok(Ellipsoid {
             a: a.to_f64(),
             b: b.to_f64(),
             c: c.to_f64(),
-        }
+        })
     }
 }
 
@@ -234,14 +278,20 @@ pub struct SphericBarrel {
 
 #[allow(non_snake_case)]
 impl SphericBarrel {
-    pub fn build_barrel<T>(R: T, r: T, h: T) -> SphericBarrel
-        where T: Num + Convert
+    pub fn build_barrel<T>(R: T, r: T, h: T) -> Result<SphericBarrel, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-       SphericBarrel {
+        if R <= T::zero() || r <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Barrel must have a positive radius or height".to_string(),
+            }));
+        }
+
+       Ok(SphericBarrel {
            R: R.to_f64(),
            r: r.to_f64(),
            h: h.to_f64(),
-       }
+       })
     }
 }
 
@@ -262,14 +312,20 @@ pub struct ParabolicBarrel {
 
 #[allow(non_snake_case)]
 impl ParabolicBarrel {
-    pub fn build_barrel<T>(R: T, r: T, h: T) -> ParabolicBarrel
-        where T: Num + Convert
+    pub fn build_barrel<T>(R: T, r: T, h: T) -> Result<ParabolicBarrel, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        ParabolicBarrel {
+        if R <= T::zero() || r <= T::zero() || h <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Barrel must have a positive radius or height".to_string(),
+            }));
+        }
+
+        Ok(ParabolicBarrel {
             R: R.to_f64(),
             r: r.to_f64(),
             h: h.to_f64(),
-        }
+        })
     }
 }
 
@@ -289,13 +345,24 @@ pub struct Torus {
 
 impl Torus {
     #[allow(non_snake_case)]
-    pub fn build_torus<T>(R: T, r: T) -> Torus
-        where T: Num + Convert
+    pub fn build_torus<T>(R: T, r: T) -> Result<Torus, MatholError>
+        where T: Num + Convert + PartialOrd
     {
-        Torus {
+        if R <= T::zero() || r <= T::zero() {
+            return Err(MatholError::NegativeValueCause(NegativeValueError {
+                message: "Torus must have a positive radius".to_string(),
+            }));
+        }
+        if r >= R {
+            return Err(MatholError::ComparisonCause(ComparisonError {
+                message: "R must be bigger than r".to_string(),
+            }));
+        }
+
+        Ok(Torus {
             R: R.to_f64(),
             r: r.to_f64(),
-        }
+        })
     }
 }
 
