@@ -3,7 +3,8 @@ use std::iter::{Product};
 use std::ops::{Sub};
 use std::iter::Iterator;
 use std::f64::consts::PI;
-use basic::{pow, Convert};
+use basics::pow::pow;
+use basics::convert_trait::Convert;
 use stochastics::probability::{factorial, combination};
 use error::*;
 

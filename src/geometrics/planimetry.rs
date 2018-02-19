@@ -1,5 +1,8 @@
 use std::f64::consts::PI;
-use basic::{Amount, Convert, Cotangent, pow};
+use basics::pow::pow;
+use basics::convert_trait::Convert;
+use basics::amount_trait::Amount;
+use basics::cotangent::Cotangent;
 use std::ops::Add;
 use std::cmp::PartialOrd;
 use std::fmt::Debug;

@@ -1,6 +1,7 @@
 use num::Num;
 use std::fmt::Debug;
-use basic::{Convert, Amount};
+use basics::convert_trait::Convert;
+use basics::amount_trait::Amount;
 use vectoroperations::vector3d::Vector3D;
 use vectoroperations::line3d::Line3D;
 use error::*;

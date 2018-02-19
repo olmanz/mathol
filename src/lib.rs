@@ -1,6 +1,6 @@
 extern crate num;
 
-pub mod basic;
+pub mod basics;
 pub mod geometrics;
 pub mod stochastics;
 pub mod statistics;

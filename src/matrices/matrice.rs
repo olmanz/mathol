@@ -1,7 +1,8 @@
 use num::{Num, FromPrimitive};
 use std::ops::Add;
 use std::fmt::{Debug, Display};
-use basic::{pow, Convert};
+use basics::pow::pow;
+use basics::convert_trait::Convert;
 use matrices::solvable::Solvable;
 use matrices::vector_help::{add_gaussian, get_scalar_product_of_vectors, reduce_row};
 use error::*;

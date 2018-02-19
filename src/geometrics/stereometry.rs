@@ -1,5 +1,7 @@
 use std::f64::consts::PI;
-use basic::{Convert, pow};
+//use basic::{Convert, pow};
+use basics::pow::pow;
+use basics::convert_trait::Convert;
 use num::Num;
 use geometrics::traits::*;
 

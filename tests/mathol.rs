@@ -1,5 +1,5 @@
 extern crate mathol;
-use mathol::basic::pow;
+use mathol::basics::pow::pow;
 use mathol::geometrics::planimetry::{Triangle, Rectangle, Parallelogram, Trapeze, Circle, Ellipsis};
 use mathol::geometrics::stereometry::{Cuboid, Pyramid, Wedge, Cylinder, Cone, Sphere, Ellipsoid, SphericBarrel, ParabolicBarrel, Torus};
 use mathol::geometrics::traits::*;

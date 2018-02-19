@@ -2,7 +2,7 @@ use num::{PrimInt, Integer, range};
 use std::iter::{Sum, Product};
 use std::ops::{Mul};
 use std::iter::Iterator;
-use basic::{pow};
+use basics::pow::pow;
 use error::*;
 use std::fmt::{Debug, Display};
 

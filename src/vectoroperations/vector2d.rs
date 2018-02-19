@@ -1,7 +1,9 @@
 use num::{Num, FromPrimitive};
-use basic::{Convert, Amount, pow};
 use std::fmt::Debug;
-use basic::pythagoras2d;
+use basics::pow::pow;
+use basics::pythagoras::pythagoras2d;
+use basics::convert_trait::Convert;
+use basics::amount_trait::Amount;
 
 #[derive(Debug)]
 pub struct Vector2D<T>

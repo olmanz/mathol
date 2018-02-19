@@ -1,5 +1,7 @@
 use num::{Num, FromPrimitive};
-use basic::{Convert, pow};
+//use basic::{Convert, pow};
+use basics::pow::pow;
+use basics::convert_trait::Convert;
 use std::f64;
 use error::*;
 
