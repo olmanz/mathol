@@ -6,7 +6,7 @@ use vectoroperations::vector3d::Vector3D;
 use error::*;
 
 /// A struct for a parametric representation of a line in three-dimensional space
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Line3D<T>
     where T: Num + Copy + Convert + Amount<T> + PartialOrd + PartialEq
 {
@@ -38,10 +38,10 @@ impl<T> Line3D<T>
     /// assert_eq!(-8, line.a.y);
     /// assert_eq!(2, line.a.z);
     /// ```
-    pub fn build_line_from_two_points(p: &Vector3D<T>, q: &Vector3D<T>) -> Line3D<T> {
+    pub fn build_line_from_two_points(p: Vector3D<T>, q: Vector3D<T>) -> Line3D<T> {
         Line3D {
             r: Vector3D::build_vector(p.x, p.y, p.z),
-            a: q.sub_vector(&p),
+            a: q.sub_vector(p),
         }
     }
 
@@ -54,9 +54,9 @@ impl<T> Line3D<T>
     /// let l = Line3D {r: Vector3D::build_vector(1, 1, 4), a: Vector3D::build_vector(2, -3, 5)};
     /// assert_eq!(3.0650834967591445, l.distance_from_point(&p));
     /// ```
-    pub fn distance_from_point(&self, p: &Vector3D<T>) -> f64 {
-        let r = p.sub_vector(&self.r);
-        self.a.get_vector_product(&r).get_length() / self.a.get_length()
+    pub fn distance_from_point(self, p: Vector3D<T>) -> f64 {
+        let r = p.sub_vector(self.r);
+        self.a.get_vector_product(r).get_length() / self.a.get_length()
     }
 
     /// Checks if two lines are parallel to each other
@@ -68,8 +68,8 @@ impl<T> Line3D<T>
     /// let l2 = Line3D {r: Vector3D {x: 0, y: 2, z: 1}, a: Vector3D {x: 2, y: 1, z: 1}};
     /// assert_eq!(true, l1.are_parallel(&l2));
     /// ```
-    pub fn are_parallel(&self, l: &Line3D<T>) -> bool {
-        if self.a.get_vector_product(&l.a).get_length() == 0.0 {
+    pub fn are_parallel(self, l: Line3D<T>) -> bool {
+        if self.a.get_vector_product(l.a).get_length() == 0.0 {
             true
         } else {
             false
@@ -85,8 +85,8 @@ impl<T> Line3D<T>
     /// let l2 = Line3D {r: Vector3D::build_vector(2, 0, 2), a: Vector3D::build_vector(1, -1, 2)};
     /// assert_eq!(true, l1.do_cross(&l2));
     /// ```
-    pub fn do_cross(&self, l: &Line3D<T>) -> bool {
-        if !self.are_parallel(&l) && self.a.get_triple_product(&l.a, &l.r.sub_vector(&self.r)).to_f64() == 0.0 {
+    pub fn do_cross(self, l: Line3D<T>) -> bool {
+        if !self.are_parallel(l) && self.a.get_triple_product(l.a, l.r.sub_vector(self.r)).to_f64() == 0.0 {
             true
         } else {
             false
@@ -102,8 +102,8 @@ impl<T> Line3D<T>
     /// let l2 = Line3D {r: Vector3D::build_vector(2, -1, 0), a: Vector3D::build_vector(3, 2, 1)};
     /// assert_eq!(true, l1.are_skew(&l2));
     /// ```
-    pub fn are_skew(&self, l: &Line3D<T>) -> bool {
-        if !self.are_parallel(&l) && self.a.get_triple_product(&l.a, &l.r.sub_vector(&self.r)).to_f64() != 0.0 {
+    pub fn are_skew(self, l: Line3D<T>) -> bool {
+        if !self.are_parallel(l) && self.a.get_triple_product(l.a, l.r.sub_vector(self.r)).to_f64() != 0.0 {
             true
         } else {
             false
@@ -141,12 +141,12 @@ impl<T> Line3D<T>
     /// let l2 = Line3D {r: Vector3D {x: 2, y: 0, z: 2}, a: Vector3D {x: 1, y: -1, z: 2}};
     /// assert_eq!(Err("Lines do cross"), l1.distance_from_line(&l2));
     /// ```
-    pub fn distance_from_line(&self, line: &Line3D<T>) -> Result<f64, MatholError> {
-        let r = line.r.sub_vector(&self.r);
-        if self.are_parallel(&line) {
-            Ok(self.a.get_vector_product(&r).get_length() / self.a.get_length())
-        } else if self.are_skew(&line) {
-            Ok(self.a.get_triple_product(&line.a, &r).to_f64().get_amount() / self.a.get_vector_product(&line.a).get_length())
+    pub fn distance_from_line(self, line: Line3D<T>) -> Result<f64, MatholError> {
+        let r = line.r.sub_vector(self.r);
+        if self.are_parallel(line) {
+            Ok(self.a.get_vector_product(r).get_length() / self.a.get_length())
+        } else if self.are_skew(line) {
+            Ok(self.a.get_triple_product(line.a, r).to_f64().get_amount() / self.a.get_vector_product(line.a).get_length())
         } else {
             return Err(MatholError::VectorCause(VectorError {
                 message: "Lines do cross".to_string(),

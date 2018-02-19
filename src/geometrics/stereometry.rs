@@ -6,6 +6,7 @@ use num::Num;
 use geometrics::traits::*;
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Cuboid {
     pub a: f64,
     pub b: f64,
@@ -25,24 +26,25 @@ impl Cuboid {
 }
 
 impl Volume for Cuboid {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         self.a * self.b * self.c
     }
 }
 
 impl Surface for Cuboid {
-    fn get_surface(&self) -> f64 {
+    fn get_surface(self) -> f64 {
         2.0 * (self.a * self.b + self.a * self.c + self.b * self.c)
     }
 }
 
 impl Diagonal for Cuboid {
-    fn get_diagonal(&self) -> f64 {
+    fn get_diagonal(self) -> f64 {
         (pow(self.a, 2) + pow(self.b, 2) + pow(self.c, 2)).sqrt()
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Pyramid {
     pub area: f64,
     pub h: f64,
@@ -60,12 +62,13 @@ impl Pyramid {
 }
 
 impl Volume for Pyramid {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (1.0 / 3.0) * self.area * self.h
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Wedge {
     pub a: f64,
     pub b: f64,
@@ -87,12 +90,13 @@ impl Wedge {
 }
 
 impl Volume for Wedge {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (1.0 / 6.0) * self.b * self.h * (2.0 * self.a + self.c)
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Cylinder {
     pub r: f64,
     pub h: f64,
@@ -110,24 +114,25 @@ impl Cylinder {
 }
 
 impl Volume for Cylinder {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         PI * pow(self.r, 2) * self.h
     }
 }
 
 impl Surface for Cylinder {
-    fn get_surface(&self) -> f64 {
+    fn get_surface(self) -> f64 {
         2.0 * PI * self.r * (self.r + self.h)
     }
 }
 
 impl Lateral for Cylinder {
-    fn get_lateral(&self) -> f64 {
+    fn get_lateral(self) -> f64 {
         2.0 * PI * self.r * self.h
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Cone {
     pub r: f64,
     pub h: f64,
@@ -145,26 +150,27 @@ impl Cone {
 }
 
 impl Volume for Cone {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (1.0 / 3.0) * PI * pow(self.r, 2) * self.h
     }
 }
 
 impl Surface for Cone {
-    fn get_surface(&self) -> f64 {
+    fn get_surface(self) -> f64 {
         let s = (pow(self.r, 2) + (pow(self.h, 2))).sqrt();
         PI * self.r * (self.r + s)
     }
 }
 
 impl Lateral for Cone {
-    fn get_lateral(&self) -> f64 {
+    fn get_lateral(self) -> f64 {
         let s = (pow(self.r, 2) + (pow(self.h, 2))).sqrt();
         PI * self.r * s
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Sphere {
     pub r: f64,
 }
@@ -180,18 +186,19 @@ impl Sphere {
 }
 
 impl Volume for Sphere {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (4.0 / 3.0) * PI * pow(self.r, 3)
     }
 }
 
 impl Surface for Sphere {
-    fn get_surface(&self) -> f64 {
+    fn get_surface(self) -> f64 {
         4.0 * PI * pow(self.r, 2)
     }
 }
 
 
+#[derive(Debug, Copy, Clone)]
 pub struct Ellipsoid {
     pub a: f64,
     pub b: f64,
@@ -211,13 +218,14 @@ impl Ellipsoid {
 }
 
 impl Volume for Ellipsoid {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (4.0 / 3.0) * PI * self.a * self.b * self.c
     }
 }
 
 
 #[allow(non_snake_case)]
+#[derive(Debug, Copy, Clone)]
 pub struct SphericBarrel {
     pub R: f64,
     pub r: f64,
@@ -238,13 +246,14 @@ impl SphericBarrel {
 }
 
 impl Volume for SphericBarrel {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (1.0 / 3.0) * PI * self.h * (2.0 * pow(self.R / 2.0, 2) + pow(self.r / 2.0, 2))
     }
 }
 
 
 #[allow(non_snake_case)]
+#[derive(Debug, Copy, Clone)]
 pub struct ParabolicBarrel {
     pub R: f64,
     pub r: f64,
@@ -265,13 +274,14 @@ impl ParabolicBarrel {
 }
 
 impl Volume for ParabolicBarrel {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         (1.0 / 15.0) * PI * self.h * (8.0 * pow(self.R / 2.0, 2) + 4.0 * (self.R / 2.0) * (self.r / 2.0) + 3.0 * pow(self.r / 2.0, 2))
     }
 }
 
 
 #[allow(non_snake_case)]
+#[derive(Debug, Copy, Clone)]
 pub struct Torus {
     pub R: f64,
     pub r: f64,
@@ -290,13 +300,13 @@ impl Torus {
 }
 
 impl Volume for Torus {
-    fn get_volume(&self) -> f64 {
+    fn get_volume(self) -> f64 {
         2.0 * pow(PI, 2) * pow(self.r / 2.0, 2) * self.R
     }
 }
 
 impl Surface for Torus {
-    fn get_surface(&self) -> f64 {
+    fn get_surface(self) -> f64 {
         4.0 * pow(PI, 2) * self.r / 2.0 * self.R
     }
 }

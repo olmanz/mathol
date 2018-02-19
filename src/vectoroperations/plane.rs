@@ -7,7 +7,7 @@ use vectoroperations::line3d::Line3D;
 use error::*;
 
 /// A struct for a parametric representation of a plane in three-dimensional space
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Plane<T>
     where T: Num + Copy + Convert + Amount<T> + PartialOrd + PartialEq
 {
@@ -45,14 +45,14 @@ impl<T> Plane<T>
     /// assert_eq!(3, vec.b.y);
     /// assert_eq!(7, vec.b.z);
     /// ```
-    pub fn build_plane_from_three_points(p: &Vector3D<T>, q: &Vector3D<T>, r: &Vector3D<T>) -> Plane<T> {
+    pub fn build_plane_from_three_points(p: Vector3D<T>, q: Vector3D<T>, r: Vector3D<T>) -> Plane<T> {
         Plane {
             r: Vector3D::build_vector(p.x, p.y, p.z),
-            n: q.sub_vector(&p).get_vector_product(&r.sub_vector(&p)),
+            n: q.sub_vector(p).get_vector_product(r.sub_vector(p)),
         }
     }
 
-    pub fn build_plane_with_vectors(r: &Vector3D<T>, n: &Vector3D<T>) -> Plane<T> {
+    pub fn build_plane_with_vectors(r: Vector3D<T>, n: Vector3D<T>) -> Plane<T> {
         Plane {
             r: Vector3D::build_vector(r.x, r.y, r.z),
             n: Vector3D::build_vector(n.x, n.y, n.z),
@@ -71,9 +71,9 @@ impl<T> Plane<T>
     /// let plane = Plane {r, a, b};
     /// assert_eq!(7.845728264713728, plane.get_distance_from_point(&q));
     /// ```
-    pub fn get_distance_from_point(&self, p: &Vector3D<T>) -> f64 {
-        let r = p.sub_vector(&self.r);
-        let d = self.n.get_scalar_product(&r).to_f64().get_amount() / self.n.get_length().get_amount();
+    pub fn get_distance_from_point(self, p: Vector3D<T>) -> f64 {
+        let r = p.sub_vector(self.r);
+        let d = self.n.get_scalar_product(r).to_f64().get_amount() / self.n.get_length().get_amount();
         d
     }
 
@@ -86,8 +86,8 @@ impl<T> Plane<T>
     /// let p = Plane {r: Vector3D::build_vector(2, 3, 5), a: Vector3D::build_vector(2, 1, 1), b: Vector3D::build_vector(1, 3, 4)};
     /// assert_eq!(true, p.is_parallel_to_line(&l));
     /// ```
-    pub fn is_parallel_to_line(&self, l: &Line3D<T>) -> bool {
-        if l.a.get_scalar_product(&self.n).to_f64() == 0.0 {
+    pub fn is_parallel_to_line(self, l: Line3D<T>) -> bool {
+        if l.a.get_scalar_product(self.n).to_f64() == 0.0 {
             true
         } else {
             false
@@ -117,15 +117,15 @@ impl<T> Plane<T>
     /// let p = Plane {r: Vector3D::build_vector(2, 3, 5), a: Vector3D::build_vector(2, 1, 1), b: Vector3D::build_vector(1, 3, 4)};
     /// assert_eq!(Err("Line is not parallel to plane"), p.get_distance_from_line(&l));
     /// ```
-    pub fn get_distance_from_line(&self, l: &Line3D<T>) -> Result<f64, MatholError> {
-        if !self.is_parallel_to_line(&l) {
+    pub fn get_distance_from_line(self, l: Line3D<T>) -> Result<f64, MatholError> {
+        if !self.is_parallel_to_line(l) {
             return Err(MatholError::VectorCause(VectorError {
                 message: "Line is not parallel to plane".to_string(),
             }));
         }
 
-        let r = l.r.sub_vector(&self.r);
-        let d = self.n.get_scalar_product(&r).to_f64().get_amount() / self.n.get_length().get_amount();
+        let r = l.r.sub_vector(self.r);
+        let d = self.n.get_scalar_product(r).to_f64().get_amount() / self.n.get_length().get_amount();
         Ok(d)
     }
 
@@ -138,8 +138,8 @@ impl<T> Plane<T>
     /// let q = Plane {r: Vector3D::build_vector(4, 3, 7), a: Vector3D::build_vector(4, 2, 2), b: Vector3D::build_vector(2, 6, 8)};
     /// assert_eq!(true, p.is_parallel_to_plane(&q));
     /// ```
-    pub fn is_parallel_to_plane(&self, p: &Plane<T>) -> bool {
-        if self.n.get_vector_product(&p.n).get_length().to_f64() == 0.0 {
+    pub fn is_parallel_to_plane(self, p: Plane<T>) -> bool {
+        if self.n.get_vector_product(p.n).get_length().to_f64() == 0.0 {
             true
         } else {
             false
@@ -169,35 +169,34 @@ impl<T> Plane<T>
     /// let q = Plane {r: Vector3D::build_vector(4, 3, 7), a: Vector3D::build_vector(4, 2, 3), b: Vector3D::build_vector(2, 6, 8)};
     /// assert_eq!(Err("The planes are not parallel"), p.get_distance_from_plane(&q));
     /// ```
-    pub fn get_distance_from_plane(&self, p: &Plane<T>) -> Result<f64, MatholError> {
-        if !self.is_parallel_to_plane(&p) {
+    pub fn get_distance_from_plane(self, p: Plane<T>) -> Result<f64, MatholError> {
+        if !self.is_parallel_to_plane(p) {
             return Err(MatholError::VectorCause(VectorError {
                 message: "The planes are not parallel".to_string(),
             }));
         }
 
-        let r = self.r.sub_vector(&p.r);
-        let d = self.n.get_scalar_product(&r).to_f64().get_amount() / self.n.get_length().get_amount();
+        let r = self.r.sub_vector(p.r);
+        let d = self.n.get_scalar_product(r).to_f64().get_amount() / self.n.get_length().get_amount();
         Ok(d)
     }
 
-    pub fn get_cutting_point_with_line(&self, l: &Line3D<T>) -> Result<Vector3D<T>, MatholError> {
-        if self.is_parallel_to_line(&l) {
+    pub fn get_cutting_point_with_line(self, l: Line3D<T>) -> Result<Vector3D<T>, MatholError> {
+        if self.is_parallel_to_line(l) {
             return Err(MatholError::VectorCause(VectorError {
                 message: "The line is parallel to the plane".to_string(),
             }));
         }
 
-        let a = self.n.get_scalar_product(&self.r.sub_vector(&l.r));
-        let b = self.n.get_scalar_product(&l.a);
+        let a = self.n.get_scalar_product(self.r.sub_vector(l.r));
+        let b = self.n.get_scalar_product(l.a);
 
-        println!("a: {:?}, b: {:?}", a, b);
 
-        Ok(l.r.add_vector(&l.a.multiply_with_scalar(a / b)))
+        Ok(l.r.add_vector(l.a.multiply_with_scalar(a / b)))
     }
 
 
-    pub fn get_cutting_line_with_plane(&self, p: &Plane<T>) {
-        unimplemented!()
-    }
+//    pub fn get_cutting_line_with_plane(&self, p: &Plane<T>) {
+//        unimplemented!()
+//    }
 }

@@ -31,7 +31,7 @@ fn test_triangle_1() {
 
 #[test]
 fn test_triangle_2() {
-    let triangle = Triangle::build_triangle_with_points(&Vector2D{x: 1, y:2}, &Vector2D{x: 6, y:2}, &Vector2D{x: 3, y:4}).unwrap();
+    let triangle = Triangle::build_triangle_with_points(Vector2D{x: 1, y:2}, Vector2D{x: 6, y:2}, Vector2D{x: 3, y:4}).unwrap();
     assert_eq!(3.605551275463989, triangle.a);
     assert_eq!(2.8284271247461903, triangle.b);
     assert_eq!(5.0, triangle.c);
@@ -869,30 +869,30 @@ fn test_multiply_with_scalar_2() {
 fn test_get_scalar_product_1() {
     let a = Vector3D {x: 2, y: 3, z: 4};
     let b = Vector3D {x: 5, y: 6, z: 7};
-    assert_eq!(56, a.get_scalar_product(&b));
+    assert_eq!(56, a.get_scalar_product(b));
 }
 
 #[test]
 fn test_get_scalar_product_2() {
     let a = Vector3D {x: 2.7, y: 3.6, z: 4.5};
     let b = Vector3D {x: 5.4, y: 6.3, z: 7.2};
-    assert_eq!(69.66, a.get_scalar_product(&b));
+    assert_eq!(69.66, a.get_scalar_product(b));
 }
 
 #[test]
 fn test_get_cut_angle_1() {
     let a = Vector3D {x: 1, y: 2, z: -3};
     let b = Vector3D {x: 5, y: -1, z: -5};
-    assert_eq!(0.6736330697086078, a.get_cut_angle(&b));
+    assert_eq!(0.6736330697086078, a.get_cut_angle(b));
 }
 
 #[test]
 fn test_get_vector_product() {
     let a = Vector3D {x: 1, y: 4, z: 0};
     let b = Vector3D {x: -2, y: 5, z: 3};
-    assert_eq!(12, a.get_vector_product(&b).x);
-    assert_eq!(-3, a.get_vector_product(&b).y);
-    assert_eq!(13, a.get_vector_product(&b).z);
+    assert_eq!(12, a.get_vector_product(b).x);
+    assert_eq!(-3, a.get_vector_product(b).y);
+    assert_eq!(13, a.get_vector_product(b).z);
 }
 
 #[test]
@@ -900,14 +900,14 @@ fn test_get_triple_product() {
     let a = Vector3D {x: 1, y: -2, z: 4};
     let b = Vector3D {x: 4, y: 1, z: 2};
     let c = Vector3D {x: -2, y: -5, z: 6};
-    assert_eq!(0, a.get_triple_product(&b, &c));
+    assert_eq!(0, a.get_triple_product(b, c));
 }
 
 #[test]
 fn test_build_line_from_two_points() {
     let p = Vector3D::build_vector(-1, 5, 0);
     let q = Vector3D::build_vector(1, -3, 2);
-    let line = Line3D::build_line_from_two_points(&p, &q);
+    let line = Line3D::build_line_from_two_points(p, q);
     assert_eq!(-1, line.r.x);
     assert_eq!(5, line.r.y);
     assert_eq!(0, line.r.z);
@@ -920,28 +920,28 @@ fn test_build_line_from_two_points() {
 fn test_distance_from_point() {
     let p = Vector3D {x: 1, y: 5, z: 3};
     let l = Line3D {r: Vector3D {x: 1, y: 1, z: 4}, a: Vector3D {x: 2, y: -3, z: 5}};
-    assert_eq!(3.0650834967591445, l.distance_from_point(&p));
+    assert_eq!(3.0650834967591445, l.distance_from_point(p));
 }
 
 #[test]
 fn test_are_parallel() {
     let l1 = Line3D {r: Vector3D {x: 1, y: 0, z: 5}, a: Vector3D {x: 2, y: 1, z: 1}};
     let l2 = Line3D {r: Vector3D {x: 0, y: 2, z: 1}, a: Vector3D {x: 2, y: 1, z: 1}};
-    assert_eq!(true, l1.are_parallel(&l2));
+    assert_eq!(true, l1.are_parallel(l2));
 }
 
 #[test]
 fn test_distance_from_line_1() {
     let l1 = Line3D {r: Vector3D {x: 1, y: 0, z: 5}, a: Vector3D {x: 2, y: 1, z: 1}};
     let l2 = Line3D {r: Vector3D {x: 0, y: 2, z: 1}, a: Vector3D {x: 2, y: 1, z: 1}};
-    assert_eq!(Ok(4.281744192888377), l1.distance_from_line(&l2));
+    assert_eq!(Ok(4.281744192888377), l1.distance_from_line(l2));
 }
 
 #[test]
 fn test_distance_from_line_2() {
     let l1 = Line3D {r: Vector3D {x: 5, y: 2, z: 1}, a: Vector3D {x: 1, y: 1, z: 3}};
     let l2 = Line3D {r: Vector3D {x: 2, y: -1, z: 0}, a: Vector3D {x: 3, y: 2, z: 1}};
-    assert_eq!(Ok(0.8432740427115678), l1.distance_from_line(&l2));
+    assert_eq!(Ok(0.8432740427115678), l1.distance_from_line(l2));
 }
 
 //#[test]
@@ -955,14 +955,14 @@ fn test_distance_from_line_2() {
 fn test_do_cross() {
     let l1 = Line3D {r: Vector3D {x: 1, y: 1, z: 0}, a: Vector3D {x: 2, y: 1, z: 1}};
     let l2 = Line3D {r: Vector3D {x: 2, y: 0, z: 2}, a: Vector3D {x: 1, y: -1, z: 2}};
-    assert_eq!(true, l1.do_cross(&l2));
+    assert_eq!(true, l1.do_cross(l2));
 }
 
 #[test]
 fn test_are_skew() {
     let l1 = Line3D {r: Vector3D {x: 5, y: 2, z: 1}, a: Vector3D {x: 1, y: 1, z: 3}};
     let l2 = Line3D {r: Vector3D {x: 2, y: -1, z: 0}, a: Vector3D {x: 3, y: 2, z: 1}};
-    assert_eq!(true, l1.are_skew(&l2));
+    assert_eq!(true, l1.are_skew(l2));
 }
 
 #[test]
@@ -970,7 +970,7 @@ fn build_plane_from_three_points() {
     let p = Vector3D {x: 1, y: 1, z: 2};
     let q = Vector3D {x: 0, y: 4, z: -5};
     let r = Vector3D {x: -3, y: 4, z: 9};
-    let vec = Plane::build_plane_from_three_points(&p, &q, &r);
+    let vec = Plane::build_plane_from_three_points(p, q, r);
     assert_eq!(1, vec.r.x);
     assert_eq!(1, vec.r.y);
     assert_eq!(2, vec.r.z);
@@ -983,23 +983,23 @@ fn build_plane_from_three_points() {
 fn test_get_distance_from_point() {
     let r = Vector3D::build_vector(3, 1, 8);
     let n = Vector3D::build_vector(-1, 5, 3);
-    let plane = Plane::build_plane_with_vectors(&r, &n);
+    let plane = Plane::build_plane_with_vectors(r, n);
     let q = Vector3D::build_vector(1, 2, 0);
-    assert_eq!(2.8735244660769563, plane.get_distance_from_point(&q));
+    assert_eq!(2.8735244660769563, plane.get_distance_from_point(q));
 }
 
 #[test]
 fn test_is_plane_parallel_to_line() {
     let l = Line3D {r: Vector3D {x: 0, y: 7, z: -3}, a: Vector3D {x: 2, y: -1, z: -1}};
     let p = Plane {r: Vector3D {x: 1, y: 3, z: 2}, n: Vector3D {x: 2, y: -1, z: 5}};
-    assert_eq!(true, p.is_parallel_to_line(&l));
+    assert_eq!(true, p.is_parallel_to_line(l));
 }
 
 #[test]
 fn test_get_distance_of_plane_to_line() {
     let l = Line3D {r: Vector3D {x: 0, y: 7, z: -3}, a: Vector3D {x: 2, y: -1, z: -1}};
     let p = Plane {r: Vector3D {x: 1, y: 3, z: 2}, n: Vector3D {x: 2, y: -1, z: 5}};
-    assert_eq!(5.659799760886717, p.get_distance_from_line(&l).expect("error"));
+    assert_eq!(5.659799760886717, p.get_distance_from_line(l).expect("error"));
 }
 
 //#[test]
@@ -1013,14 +1013,14 @@ fn test_get_distance_of_plane_to_line() {
 fn test_is_plane_parallel_to_plane() {
     let p = Plane {r: Vector3D {x: 3, y: 1, z: -2}, n: Vector3D {x: 2, y: -1, z: 4}};
     let q = Plane {r: Vector3D {x: -4, y: 3, z: 0}, n: Vector3D {x: -4, y: 2, z: -8}};
-    assert_eq!(true, p.is_parallel_to_plane(&q));
+    assert_eq!(true, p.is_parallel_to_plane(q));
 }
 
 #[test]
 fn test_get_distance_of_plane_to_plane() {
     let p = Plane {r: Vector3D {x: 3, y: 1, z: -2}, n: Vector3D {x: 2, y: -1, z: 4}};
     let q = Plane {r: Vector3D {x: -4, y: 3, z: 0}, n: Vector3D {x: -4, y: 2, z: -8}};
-    assert_eq!(1.7457431218879391, p.get_distance_from_plane(&q).expect("error"));
+    assert_eq!(1.7457431218879391, p.get_distance_from_plane(q).expect("error"));
 }
 
 //#[test]
@@ -1032,9 +1032,9 @@ fn test_get_distance_of_plane_to_plane() {
 
 #[test]
 fn test_cutting_point_of_line_with_plane() {
-    let l = Line3D::build_line_from_two_points(&Vector3D::build_vector(2, 0, 5), &Vector3D::build_vector(5, -4, 4));
-    let p = Plane::build_plane_with_vectors(&Vector3D::build_vector(1, 1, 2), &Vector3D::build_vector(2, 1, 1));
-    let s = p.get_cutting_point_with_line(&l).expect("error");
+    let l = Line3D::build_line_from_two_points(Vector3D::build_vector(2, 0, 5), Vector3D::build_vector(5, -4, 4));
+    let p = Plane::build_plane_with_vectors(Vector3D::build_vector(1, 1, 2), Vector3D::build_vector(2, 1, 1));
+    let s = p.get_cutting_point_with_line(l).expect("error");
     assert_eq!(-10, s.x);
     assert_eq!(16, s.y);
     assert_eq!(9, s.z);
@@ -1045,14 +1045,14 @@ fn test_cutting_point_of_line_with_plane() {
 fn test_cutting_point_of_line_with_plane_panic() {
     let l = Line3D {r: Vector3D {x: 0, y: 7, z: -3}, a: Vector3D {x: 2, y: -1, z: -1}};
     let p = Plane {r: Vector3D {x: 1, y: 3, z: 2}, n: Vector3D {x: 2, y: -1, z: 5}};
-    let s = p.get_cutting_point_with_line(&l).expect("error");
+    let s = p.get_cutting_point_with_line(l).expect("error");
 }
 
 #[test]
 fn test_add_vector2d() {
     let vec_1 = Vector2D::build_vector(1,2);
     let vec_2 = Vector2D::build_vector(3,4);
-    let vec_3 = vec_1.add_vector(&vec_2);
+    let vec_3 = vec_1.add_vector(vec_2);
     assert_eq!(4, vec_3.x);
     assert_eq!(6, vec_3.y);
 }
@@ -1061,7 +1061,7 @@ fn test_add_vector2d() {
 fn test_sub_vector2d() {
     let vec_1 = Vector2D::build_vector(1,2);
     let vec_2 = Vector2D::build_vector(3,4);
-    let vec_3 = vec_1.sub_vector(&vec_2);
+    let vec_3 = vec_1.sub_vector(vec_2);
     assert_eq!(-2, vec_3.x);
     assert_eq!(-2, vec_3.y);
 }
@@ -1084,14 +1084,14 @@ fn test_multiply_with_scalar_vector2d() {
 fn test_get_scalar_product_2d_1() {
     let vec_1 = Vector2D::build_vector(3, 2);
     let vec_2 = Vector2D::build_vector(-1, 5);
-    assert_eq!(7, vec_1.get_scalar_product(&vec_2));
+    assert_eq!(7, vec_1.get_scalar_product(vec_2));
 }
 
 #[test]
 fn test_get_scalar_product_2d_2() {
     let vec_1 = Vector2D::build_vector(1, 1);
     let vec_2 = Vector2D::build_vector(-1, 1);
-    assert_eq!(0, vec_1.get_scalar_product(&vec_2));
+    assert_eq!(0, vec_1.get_scalar_product(vec_2));
 }
 
 #[test]
@@ -1099,15 +1099,15 @@ fn test_get_cut_angle_vector2d_1() {
     let vec_1 = Vector2D::build_vector(2, 1);
     let vec_2 = Vector2D::build_vector(1, 0);
     let vec_3 = Vector2D::build_vector(0, 1);
-    assert_eq!(0.46364760900080615, vec_1.get_cut_angle(&vec_2));
-    assert_eq!(1.1071487177940904, vec_1.get_cut_angle(&vec_3));
+    assert_eq!(0.46364760900080615, vec_1.get_cut_angle(vec_2));
+    assert_eq!(1.1071487177940904, vec_1.get_cut_angle(vec_3));
 }
 
 #[test]
 fn test_get_cut_angle_vector2d_2() {
     let vec_1 = Vector2D::build_vector(4, 3);
     let vec_2 = Vector2D::build_vector(-3, 2);
-    assert_eq!(1.9100889412489412, vec_1.get_cut_angle(&vec_2));
+    assert_eq!(1.9100889412489412, vec_1.get_cut_angle(vec_2));
 }
 
 #[test]
