@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use basic::{Convert, Amount};
 use vectoroperations::vector3d::Vector3D;
 use vectoroperations::line3d::Line3D;
+use error::VectorError;
 
 /// A struct for a parametric representation of a plane in three-dimensional space
 #[derive(Debug)]
@@ -112,9 +113,11 @@ impl<T> Plane<T>
     /// let p = Plane {r: Vector3D::build_vector(2, 3, 5), a: Vector3D::build_vector(2, 1, 1), b: Vector3D::build_vector(1, 3, 4)};
     /// assert_eq!(Err("Line is not parallel to plane"), p.get_distance_from_line(&l));
     /// ```
-    pub fn get_distance_from_line(&self, l: &Line3D<T>) -> Result<f64, &str> {
+    pub fn get_distance_from_line(&self, l: &Line3D<T>) -> Result<f64, VectorError> {
         if !self.is_parallel_to_line(&l) {
-            return Err("Line is not parallel to plane");
+            return Err(VectorError {
+                message: "Line is not parallel to plane".to_string(),
+            });
         }
 
         let n = self.a.get_vector_product(&self.b);
@@ -165,9 +168,11 @@ impl<T> Plane<T>
     /// let q = Plane {r: Vector3D::build_vector(4, 3, 7), a: Vector3D::build_vector(4, 2, 3), b: Vector3D::build_vector(2, 6, 8)};
     /// assert_eq!(Err("The planes are not parallel"), p.get_distance_from_plane(&q));
     /// ```
-    pub fn get_distance_from_plane(&self, p: &Plane<T>) -> Result<f64, &str> {
+    pub fn get_distance_from_plane(&self, p: &Plane<T>) -> Result<f64, VectorError> {
         if !self.is_parallel_to_plane(&p) {
-            return Err("The planes are not parallel");
+            return Err(VectorError {
+                message: "The planes are not parallel".to_string(),
+            });
         }
 
         let n = self.a.get_vector_product(&self.b);
@@ -176,23 +181,23 @@ impl<T> Plane<T>
         Ok(d)
     }
 
-    //    // TODO: Implementation
-    //    pub fn get_cutting_point_with_line(&self, l: &Line<T>) {
-    //        unimplemented!()
-    //    }
-    //
-    //    // TODO: Implementation
-    //    pub fn get_cutting_angle_with_line(&self, l: &Line<T>) {
-    //        unimplemented!()
-    //    }
-    //
-    //    // TODO: Implementation
-    //    pub fn get_cutting_line_with_plane(&self, p: &Plane<T>) {
-    //        unimplemented!()
-    //    }
-    //
-    //    // TODO: Implementation
-    //    pub fn get_cutting_angle_with_plane(&self, p: &Plane<T>) {
-    //        unimplemented!()
-    //    }
+        // TODO: Implementation
+//        pub fn get_cutting_point_with_line(&self, l: &Line3D<T>) {
+//            unimplemented!()
+//        }
+
+        // TODO: Implementation
+//        pub fn get_cutting_angle_with_line(&self, l: &Line3D<T>) {
+//            unimplemented!()
+//        }
+
+        // TODO: Implementation
+//        pub fn get_cutting_line_with_plane(&self, p: &Plane<T>) {
+//            unimplemented!()
+//        }
+
+        // TODO: Implementation
+//        pub fn get_cutting_angle_with_plane(&self, p: &Plane<T>) {
+//            unimplemented!()
+//        }
 }

@@ -6,3 +6,4 @@ pub mod stochastics;
 pub mod statistics;
 pub mod vectoroperations;
 pub mod matrices;
+pub mod error;

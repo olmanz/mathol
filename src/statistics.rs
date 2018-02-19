@@ -1,6 +1,7 @@
 use num::{Num, FromPrimitive};
 use basic::{Convert, pow};
 use std::f64;
+use error::EmptyVectorError;
 
 /// Calculates the arithmetic mean of a slice of Numbers
 /// # Remarks
@@ -15,13 +16,15 @@ use std::f64;
 /// let arr = [8, 6, 5, 11, 6, 6];
 /// assert_eq!(7.0, get_arithmetic_mean(&arr).unwrap());
 /// ```
-pub fn get_arithmetic_mean<T>(data: &[T]) -> Result<f64, &str>
+pub fn get_arithmetic_mean<T>(data: &[T]) -> Result<f64, EmptyVectorError>
     where T: Num + Convert + Copy
 {
     let n = data.iter().len();
 
     match n {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             let sum = data.iter().fold(T::zero(), |sum, x| sum + *x);
             let arithmetic_mean = sum.to_f64() / n.to_f64();
@@ -43,16 +46,20 @@ pub fn get_arithmetic_mean<T>(data: &[T]) -> Result<f64, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(6.550868486352359, get_harmonic_mean(&vec).unwrap());
 /// ```
-pub fn get_harmonic_mean<T>(data: &[T]) -> Result<f64, &str>
+pub fn get_harmonic_mean<T>(data: &[T]) -> Result<f64, EmptyVectorError>
     where T: Num + Convert + Copy + PartialEq
 {
     let n = data.iter().len();
 
     match n {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             if data.contains(&T::zero()) {
-                return Err("Vector or Array contains zero");
+                return Err(EmptyVectorError {
+                    message: "Vector or Array contains zero".to_string(),
+                });
             }
 
             let sum = data.iter().fold(0.0, |sum, x| sum + 1.0 / x.to_f64());
@@ -75,13 +82,15 @@ pub fn get_harmonic_mean<T>(data: &[T]) -> Result<f64, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(7.280109889280518, get_quadratic_mean(&vec).unwrap());
 /// ```
-pub fn get_quadratic_mean<T>(data: &[T]) -> Result<f64, &str>
+pub fn get_quadratic_mean<T>(data: &[T]) -> Result<f64, EmptyVectorError>
     where T: Num + Convert + Copy + PartialEq
 {
     let n = data.iter().len();
 
     match n {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             let sum = data.iter().fold(T::zero(), |sum, x| sum + *x * *x);
             let quadratic_mean = (sum.to_f64() / n.to_f64()).sqrt();
@@ -103,13 +112,15 @@ pub fn get_quadratic_mean<T>(data: &[T]) -> Result<f64, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(4.8, get_variance(&vec).unwrap());
 /// ```
-pub fn get_variance<T>(data: &[T]) -> Result<f64, &str>
+pub fn get_variance<T>(data: &[T]) -> Result<f64, EmptyVectorError>
     where T: Num + Convert + Copy + FromPrimitive
 {
     let n = data.iter().len();
 
     match n {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             let mean = FromPrimitive::from_f64(get_arithmetic_mean(data).unwrap());
             let a = data.iter().fold(T::zero(), |sum, x| sum + pow((*x - mean.unwrap()), 2));
@@ -131,13 +142,15 @@ pub fn get_variance<T>(data: &[T]) -> Result<f64, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(2.1908902300206643, get_standard_deviation(&vec).unwrap());
 /// ```
-pub fn get_standard_deviation<T>(data: &[T]) -> Result<f64, &str>
+pub fn get_standard_deviation<T>(data: &[T]) -> Result<f64, EmptyVectorError>
     where T: Num + Convert + Copy + FromPrimitive
 {
     let n = data.iter().len();
 
     match n {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => Ok(get_variance(data).unwrap().sqrt()),
     }
 }
@@ -154,11 +167,13 @@ pub fn get_standard_deviation<T>(data: &[T]) -> Result<f64, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(5, get_min(&vec).unwrap());
 /// ```
-pub fn get_min<T>(data: &[T]) -> Result<T, &str>
+pub fn get_min<T>(data: &[T]) -> Result<T, EmptyVectorError>
     where T: Num + Convert + Copy + FromPrimitive + PartialOrd
 {
     match data.iter().len() {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             let min = data.iter().fold(data[0], |mut min, x| {
                 if *x < min {
@@ -185,11 +200,13 @@ pub fn get_min<T>(data: &[T]) -> Result<T, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(11, get_max(&vec).unwrap());
 /// ```
-pub fn get_max<T>(data: &[T]) -> Result<T, &str>
+pub fn get_max<T>(data: &[T]) -> Result<T, EmptyVectorError>
     where T: Num + Convert + Copy + FromPrimitive + PartialOrd
 {
     match data.iter().len() {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => {
             let max = data.iter().fold(data[0], |mut max, x| {
                 if *x > max {
@@ -216,11 +233,13 @@ pub fn get_max<T>(data: &[T]) -> Result<T, &str>
 /// let vec = vec![8, 6, 5, 11, 6, 6];
 /// assert_eq!(6, get_span(&vec).unwrap());
 /// ```
-pub fn get_span<T>(data: &[T]) -> Result<T, &str>
+pub fn get_span<T>(data: &[T]) -> Result<T, EmptyVectorError>
     where T: Num + Convert + Copy + FromPrimitive + PartialOrd
 {
     match data.iter().len() {
-        0 => Err("Vector or Array is empty"),
+        0 => Err(EmptyVectorError {
+            message: "Vector or Array is empty".to_string(),
+        }),
         _ => Ok(get_max(data).unwrap() - get_min(data).unwrap()),
     }
 }

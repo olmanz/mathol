@@ -3,7 +3,7 @@ use std::iter::{Sum, Product};
 use std::ops::{Mul};
 use std::iter::Iterator;
 use basic::{pow};
-
+use error::{NegativeValueError, PermutationError, CombinationError, VariationError};
 
 /// Calculates the factorial of a given number n.
 /// # Remarks
@@ -14,11 +14,13 @@ use basic::{pow};
 /// assert_eq!(2432902008176640000, factorial(20_u64).unwrap());
 /// assert_eq!(479001600, factorial(12_i32).unwrap());
 /// ```
-pub fn factorial<T>(n: T) -> Result<T, &'static str>
+pub fn factorial<T>(n: T) -> Result<T, NegativeValueError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err("Value for facultation must be a positive integer!");
+        return Err(NegativeValueError {
+            message: "Value for facultation must be a positive integer!".to_string(),
+        });
     }
 
     Ok(range(T::one(), n + T::one()).product())
@@ -36,20 +38,26 @@ pub fn factorial<T>(n: T) -> Result<T, &'static str>
 /// ```
 /// assert_eq!(10, permutation(5, vec![3, 2]).unwrap());
 /// ```
-pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, &'static str>
+pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, PermutationError>
     where T: PrimInt + Integer + Product + Mul + Sum
 {
     if n < T::one() {
-        return Err("Parameter n must be a positive integer!");
+        return Err(PermutationError {
+            message: "Parameter n must be a positive integer!".to_string(),
+        });
     }
     if karr.is_empty() {
-        return Err("Parameter karr is an empty vector!");
+        return Err(PermutationError {
+            message: "Parameter karr is an empty vector!".to_string(),
+        });
     }
 
     let karr_2 = karr.clone();
     let sum: T = karr.into_iter().sum();
     if sum != n {
-        return Err("Sum of parts is not equal to whole");
+        return Err(PermutationError {
+            message: "Sum of parts is not equal to whole".to_string(),
+        });
     }
 
     let divisor = karr_2.into_iter().fold(T::one(), |prod, x| prod * factorial(x).unwrap());
@@ -67,17 +75,23 @@ pub fn permutation<T>(n: T, karr: Vec<T>) -> Result<T, &'static str>
 /// ```
 /// assert_eq!(792, combination(12, 7).unwrap());
 /// ```
-pub fn combination<T>(n: T, k: T) -> Result<T, &'static str>
+pub fn combination<T>(n: T, k: T) -> Result<T, CombinationError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err("Parameter n must be a positive integer!");
+        return Err(CombinationError {
+            message: "Parameter n must be a positive integer!".to_string(),
+        });
     }
     if k < T::zero() {
-        return Err("Parameter k must be a positive integer!");
+        return Err(CombinationError {
+            message: "Parameter k must be a positive integer!".to_string(),
+        });
     }
     if k > n {
-        return Err("Number of selections outgrows the number of elements");
+        return Err(CombinationError {
+            message: "Number of selections outgrows the number of elements".to_string(),
+        });
     }
 
     Ok(factorial(n).unwrap() / factorial(n - k).unwrap() / factorial(k).unwrap())
@@ -94,14 +108,18 @@ pub fn combination<T>(n: T, k: T) -> Result<T, &'static str>
 /// ```
 /// assert_eq!(220, combination_with_repetition(10, 3).unwrap());
 /// ```
-pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, &'static str>
+pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, CombinationError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err("Parameter n must be a positive integer!");
+        return Err(CombinationError {
+            message: "Parameter n must be a positive integer!".to_string(),
+        });
     }
     if k < T::zero() {
-        return Err("Parameter k must be a positive integer!");
+        return Err(CombinationError {
+            message: "Parameter k must be a positive integer!".to_string(),
+        });
     }
 
     let m = n + k - T::one();
@@ -121,18 +139,23 @@ pub fn combination_with_repetition<T>(n: T, k: T) -> Result<T, &'static str>
 /// ```
 /// assert_eq!(336, variation(8, 3).unwrap());
 /// ```
-pub fn variation<T>(n: T, k: T) -> Result<T, &'static str>
+pub fn variation<T>(n: T, k: T) -> Result<T, VariationError>
     where T: PrimInt + Integer + Product
 {
     if n < T::zero() {
-        return Err("Parameter n must be a positive integer!");
+        return Err(VariationError {
+            message: "Parameter n must be a positive integer!".to_string(),
+        });
     }
     if k < T::zero() {
-        return Err("Parameter k must be a positive integer!");
+        return Err(VariationError {
+            message: "Parameter k must be a positive integer!".to_string(),
+        });
     }
-
     if k > n {
-        return Err("Number of selections outgrows the number of elements");
+        return Err(VariationError {
+            message: "Number of selections outgrows the number of elements".to_string(),
+        });
     }
 
     Ok(factorial(n).unwrap() / factorial(n - k).unwrap())
@@ -151,14 +174,18 @@ pub fn variation<T>(n: T, k: T) -> Result<T, &'static str>
 /// ```
 /// assert_eq!(125, variation_with_repetition(5, 3).unwrap());
 /// ```
-pub fn variation_with_repetition<T>(n: T, k: T) -> Result<T, &'static str>
+pub fn variation_with_repetition<T>(n: T, k: T) -> Result<T, VariationError>
     where T: PrimInt + Integer
 {
     if n < T::zero() {
-        return Err("Parameter n must be a positive integer!");
+        return Err(VariationError {
+            message: "Parameter n must be a positive integer!".to_string(),
+        });
     }
     if k < T::zero() {
-        return Err("Parameter k must be a positive integer!");
+        return Err(VariationError {
+            message: "Parameter k must be a positive integer!".to_string(),
+        });
     }
 
     Ok(pow(n, k))

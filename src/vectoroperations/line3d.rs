@@ -2,6 +2,7 @@ use num::Num;
 use basic::{Convert, Amount};
 use std::fmt::Debug;
 use vectoroperations::vector3d::Vector3D;
+use error::VectorError;
 
 /// A struct for a parametric representation of a line in three-dimensional space
 #[derive(Debug)]
@@ -139,14 +140,16 @@ impl<T> Line3D<T>
     /// let l2 = Line3D {r: Vector3D {x: 2, y: 0, z: 2}, a: Vector3D {x: 1, y: -1, z: 2}};
     /// assert_eq!(Err("Lines do cross"), l1.distance_from_line(&l2));
     /// ```
-    pub fn distance_from_line(&self, line: &Line3D<T>) -> Result<f64, &str> {
+    pub fn distance_from_line(&self, line: &Line3D<T>) -> Result<f64, VectorError> {
         let r = line.r.sub_vector(&self.r);
         if self.are_parallel(&line) {
             Ok(self.a.get_vector_product(&r).get_length() / self.a.get_length())
         } else if self.are_skew(&line) {
             Ok(self.a.get_triple_product(&line.a, &r).to_f64().get_amount() / self.a.get_vector_product(&line.a).get_length())
         } else {
-            return Err("Lines do cross");
+            return Err(VectorError {
+                message: "Lines do cross".to_string(),
+            });
         }
     }
 }
