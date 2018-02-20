@@ -1,3 +1,14 @@
+/// Trait for Converting between numeric values.
+/// # Remarks
+/// As of now, for this crate it is only relevant to convert to f64 or usize.
+/// If necessary, more conversions can be added.
+/// # Examples
+/// ```
+/// use basics::convert_trait::Convert;
+///
+/// let a: i32 = 9;
+/// assert_eq!(9.0, a.to_f64());
+/// ```
 pub trait Convert {
     fn to_usize(self) -> usize;
     fn to_f64(self) -> f64;

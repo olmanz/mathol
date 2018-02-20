@@ -1,6 +1,5 @@
 use num::Num;
-use basics::pow::pow;
-use basics::pythagoras::{pythagoras2d, pythagoras3d};
+use basics::{pow, pythagoras2d, pythagoras3d};
 use basics::convert_trait::Convert;
 use basics::amount_trait::Amount;
 use std::fmt::Debug;

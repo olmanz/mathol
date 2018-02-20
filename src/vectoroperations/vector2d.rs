@@ -1,7 +1,6 @@
 use num::{Num, FromPrimitive};
 use std::fmt::Debug;
-use basics::pow::pow;
-use basics::pythagoras::pythagoras2d;
+use basics::{pow, pythagoras2d};
 use basics::convert_trait::Convert;
 use basics::amount_trait::Amount;
 
@@ -77,6 +76,13 @@ pub struct Polar<T>
 impl<T> Polar<T>
     where T: Num + Copy + Convert + Amount<T> + FromPrimitive
 {
+    pub fn build_polar(r: T, phi: T) -> Polar<T> {
+        Polar {
+            r,
+            phi,
+        }
+    }
+
     /// Transforms polar coordinates to cartesic coordinates.
     /// Returns an instance of the struct Vector2D
     pub fn transform_to_vector2d(self) -> Vector2D<f64> {
