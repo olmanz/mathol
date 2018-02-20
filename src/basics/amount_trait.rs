@@ -4,7 +4,7 @@
 /// Gets implemented for every signed numeric type: All integer types and all float types.
 /// # Examples
 /// ```
-/// use basics::amount_trait::Amount;
+/// use mathol::basics::amount_trait::Amount;
 ///
 /// let a = 3;
 /// let b = -5.2;

@@ -6,6 +6,10 @@ use std::fmt::Debug;
 use std::cmp::PartialOrd;
 
 /// Struct for three-dimensional vectors
+/// # Usage
+/// ```
+/// use mathol::vectoroperations::vector3d::Vector3D;
+/// ```
 #[derive(Debug, Copy, Clone)]
 pub struct Vector3D<T>
     where T: Num + Copy + Convert + Amount<T> + PartialOrd
@@ -28,7 +32,16 @@ impl<T> Vector3D<T>
     }
 
     /// Transforms cartesic coordinates to cylindrical coordinates.
+    /// # Return value
     /// Returns an instance of the struct Cylindrical
+    /// # Examples
+    /// ```
+    /// let cart = Vector3D {x: 3.0, y: 4.0, z: 5.0};
+    /// let cyl = cart.transform_to_cylindrical();
+    /// assert_eq!(5.0, cyl.rho);
+    /// assert_eq!(53.13010235415598, cyl.phi);
+    /// assert_eq!(5.0, cyl.z);
+    /// ```
     pub fn transform_to_cylindrical(self) -> Cylindrical<f64> {
         Cylindrical {
             rho: pythagoras2d(self.x, self.y),
@@ -38,7 +51,16 @@ impl<T> Vector3D<T>
     }
 
     /// Transforms cartesic coordinates to spherical coordinates.
+    /// # Return value
     /// Returns an instance of the struct Spherical
+    /// # Examples
+    /// ```
+    /// let cart = Vector3D {x: 3.0, y: 4.0, z: 5.0};
+    /// let sph = cart.transform_to_spherical();
+    /// assert_eq!(7.0710678118654755, sph.r);
+    /// assert_eq!(45.00000000000001, sph.theta);
+    /// assert_eq!(53.13010235415598, sph.phi);
+    /// ```
     pub fn transform_to_spherical(self) -> Spherical<f64> {
         let r = pythagoras3d(self.x, self.y, self.z);
         Spherical {
@@ -49,6 +71,9 @@ impl<T> Vector3D<T>
     }
 
     /// Calculate the angle of the polar axis in relaion to the x-axis
+    /// # Return value
+    /// Returns the angle as f64 degree value
+    /// # Examples
     pub fn get_angle(self) -> f64 {
         if self.x == T::zero() {
             if self.y < T::zero(){
@@ -63,8 +88,19 @@ impl<T> Vector3D<T>
         }
     }
 
+    /// Calculates the distance between two points
+    /// # Parameters
+    /// other: The second point
+    /// # Return values
+    /// Returns the distance as f64 value
+    /// # Examples
+    /// ```
+    /// let p = Vector3D::build_vector(1, 4, 9);
+    /// let q = Vector3D::build_vector(3, 7, 13);
+    /// assert_eq!(5.385164807, p.get_distance(q);
+    /// ```
     pub fn get_distance(self, other: Vector3D<T>) -> f64 {
-        (pow(self.x - other.x, 2) + pow(self.y - other.y, 2) + pow(self.z - other.z, 2)).to_f64().sqrt()
+        pythagoras3d(self.x - other.x, self.y - other.y, self.z - other.z)
     }
 
     /// Adds a vector to another vector
@@ -74,7 +110,7 @@ impl<T> Vector3D<T>
     /// ```
     /// let vector_1 = Vector3D::build_vector(2, 2, 1);
     /// let vector_2 = Vector3D::build_vector(2, 3, 5);
-    /// let vector_3 = vector_1.add_vector(&vector_2);
+    /// let vector_3 = vector_1.add_vector(vector_2);
     /// assert_eq!(4, vector_3.x);
     /// assert_eq!(5, vector_3.y);
     /// assert_eq!(6, vector_3.z);
@@ -90,7 +126,7 @@ impl<T> Vector3D<T>
     /// ```
     /// let vector_1 = Vector3D::build_vector(2, 2, 1);
     /// let vector_2 = Vector3D::build_vector(2, 3, 5);
-    /// let vector_3 = vector_1.add_vector(&vector_2);
+    /// let vector_3 = vector_1.sub_vector(vector_2);
     /// assert_eq!(0, vector_3.x);
     /// assert_eq!(-1, vector_3.y);
     /// assert_eq!(-4, vector_3.z);
@@ -111,7 +147,7 @@ impl<T> Vector3D<T>
     /// assert_eq!(6.363961030678928, vector_2.get_length());
     /// ```
     pub fn get_length(self) -> f64 {
-        (pow(self.x, 2) + pow(self.y, 2) + pow(self.z, 2)).to_f64().sqrt()
+        pythagoras3d(self.x, self.y, self.z)
     }
 
     /// Calculates the three direction angles alpha, beta and gamma of a three-dimensional vector
@@ -163,7 +199,7 @@ impl<T> Vector3D<T>
     /// ```
     /// let vector_1 = Vector3D::build_vector(2, 3, 4);
     /// let vector_2 = Vector3D::build_vector(5, 6, 7);
-    /// assert_eq!(56, vector_1.get_scalar_product(&vector_2));
+    /// assert_eq!(56, vector_1.get_scalar_product(vector_2));
     /// ```
     pub fn get_scalar_product(self, vec: Vector3D<T>) -> T {
         self.x * vec.x + self.y * vec.y + self.z * vec.z
@@ -176,7 +212,7 @@ impl<T> Vector3D<T>
     /// ```
     /// let vector_1 = Vector3D::build_vector(1, 2, -3);
     /// let vector_2 = Vector3D::build_vector(5, -1, -5);
-    /// assert_eq!(0.6736330697086078, vector_1.get_cut_angle(&vector_2));
+    /// assert_eq!(0.6736330697086078, vector_1.get_cut_angle(vector_2));
     /// ```
     pub fn get_cut_angle(self, vec: Vector3D<T>) -> f64 {
         self.get_scalar_product(vec).to_f64() / (self.get_length().to_f64() * vec.get_length().to_f64())
@@ -189,7 +225,7 @@ impl<T> Vector3D<T>
     /// ```
     /// let vector_1 = Vector3D::build_vector(1, 4, 0);
     /// let vector_2 = Vector3D::build_vector(-2, 5, 3);
-    /// let vec_product = vector_1.get_vector_product(&vector_2);
+    /// let vec_product = vector_1.get_vector_product(vector_2);
     /// assert_eq!(12, vec_product.x);
     /// assert_eq!(-3, vec_product.y);
     /// assert_eq!(13, vec_product.z);
@@ -206,7 +242,7 @@ impl<T> Vector3D<T>
     /// let vector_1 = Vector3D::build_vector(1, -2, 4);
     /// let vector_2 = Vector3D::build_vector(4, 1, 2);
     /// let vector_3 = Vector3D::build_vector(-2, -5, -6);
-    /// assert_eq!(0, vector_1.get_triple_product(&vector_2, &vector_3));
+    /// assert_eq!(0, vector_1.get_triple_product(vector_2, vector_3));
     /// ```
     pub fn get_triple_product(self, vec_1: Vector3D<T>, vec_2: Vector3D<T>) -> T {
         self.x * (vec_1.y * vec_2.z - vec_1.z * vec_2.y) + self.y * (vec_1.z * vec_2.x - vec_1.x * vec_2.z) + self.z * (vec_1.x * vec_2.y - vec_1.y * vec_2.x)

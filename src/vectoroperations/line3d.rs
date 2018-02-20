@@ -30,7 +30,7 @@ impl<T> Line3D<T>
     /// ```
     /// let p = Vector3D::build_vector(-1, 5, 0);
     /// let q = Vector3D::build_vector(1, -3, 2);
-    /// let line = Line3D::build_line_from_two_points(&p, &q);
+    /// let line = Line3D::build_line_from_two_points(p, q);
     /// assert_eq!(-1, line.r.x);
     /// assert_eq!(5, line.r.y);
     /// assert_eq!(0, line.r.z);
@@ -52,7 +52,7 @@ impl<T> Line3D<T>
     /// ```
     /// let p = Vector3D::build_vector(1, 5, 3);
     /// let l = Line3D {r: Vector3D::build_vector(1, 1, 4), a: Vector3D::build_vector(2, -3, 5)};
-    /// assert_eq!(3.0650834967591445, l.distance_from_point(&p));
+    /// assert_eq!(3.0650834967591445, l.distance_from_point(p));
     /// ```
     pub fn distance_from_point(self, p: Vector3D<T>) -> f64 {
         let r = p.sub_vector(self.r);
@@ -66,7 +66,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(1, 0, 5), a: Vector3D::build_vector(2, 1, 1)};
     /// let l2 = Line3D {r: Vector3D {x: 0, y: 2, z: 1}, a: Vector3D {x: 2, y: 1, z: 1}};
-    /// assert_eq!(true, l1.are_parallel(&l2));
+    /// assert_eq!(true, l1.are_parallel(l2));
     /// ```
     pub fn are_parallel(self, l: Line3D<T>) -> bool {
         if self.a.get_vector_product(l.a).get_length() == 0.0 {
@@ -83,7 +83,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(1, 1, 0), a: Vector3D::build_vector(2, 1, 1)};
     /// let l2 = Line3D {r: Vector3D::build_vector(2, 0, 2), a: Vector3D::build_vector(1, -1, 2)};
-    /// assert_eq!(true, l1.do_cross(&l2));
+    /// assert_eq!(true, l1.do_cross(l2));
     /// ```
     pub fn do_cross(self, l: Line3D<T>) -> bool {
         if !self.are_parallel(l) && self.a.get_triple_product(l.a, l.r.sub_vector(self.r)).to_f64() == 0.0 {
@@ -100,7 +100,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(5, 2, 1), a: Vector3D::build_vector(1, 1, 3)};
     /// let l2 = Line3D {r: Vector3D::build_vector(2, -1, 0), a: Vector3D::build_vector(3, 2, 1)};
-    /// assert_eq!(true, l1.are_skew(&l2));
+    /// assert_eq!(true, l1.are_skew(l2));
     /// ```
     pub fn are_skew(self, l: Line3D<T>) -> bool {
         if !self.are_parallel(l) && self.a.get_triple_product(l.a, l.r.sub_vector(self.r)).to_f64() != 0.0 {
@@ -123,7 +123,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(1, 0, 5), a: Vector3D::build_vector(2, 1, 1)};
     /// let l2 = Line3D {r: Vector3D::build_vector(0, 2, 1), a: Vector3D::build_vector(2, 1, 1)};
-    /// assert_eq!(Ok(4.281744192888377), l1.distance_from_line(&l2));
+    /// assert_eq!(Ok(4.281744192888377), l1.distance_from_line(l2));
     /// ```
     ///
     /// Lines are skew:
@@ -131,7 +131,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(5, 2, 1), a: Vector3D::build_vector(1, 1, 3)};
     /// let l2 = Line3D {r: Vector3D::build_vector(2, -1, 0), a: Vector3D::build_vector(3, 2, 1)};
-    /// assert_eq!(Ok(0.8432740427115678), l1.distance_from_line(&l2));
+    /// assert_eq!(Ok(0.8432740427115678), l1.distance_from_line(l2));
     /// ```
     ///
     /// Lines do cross:
@@ -139,7 +139,7 @@ impl<T> Line3D<T>
     /// ```
     /// let l1 = Line3D {r: Vector3D::build_vector(1, 1, 0), a: Vector3D {x: 2, y: 1, z: 1}};
     /// let l2 = Line3D {r: Vector3D {x: 2, y: 0, z: 2}, a: Vector3D {x: 1, y: -1, z: 2}};
-    /// assert_eq!(Err("Lines do cross"), l1.distance_from_line(&l2));
+    /// assert_eq!(Err("Lines do cross"), l1.distance_from_line(l2));
     /// ```
     pub fn distance_from_line(self, line: Line3D<T>) -> Result<f64, MatholError> {
         let r = line.r.sub_vector(self.r);

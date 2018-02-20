@@ -11,7 +11,7 @@ use basics::convert_trait::Convert;
 /// Returns the result of the exponentiation
 /// # Example
 /// ```
-/// use basics::pow;
+/// use mathol::basics::pow;
 ///
 /// let result = pow(3, 2);
 /// assert_eq!(9, result);
@@ -34,7 +34,7 @@ pub fn pow<T, U>(base: T, exponent: U) -> T
 /// Takes values a and b and returns c according to c = sqrt(a² + b²)
 /// # Examples
 /// ```
-/// use basics::pythagoras2d;
+/// use mathol::basics::pythagoras2d;
 ///
 /// let c = pythagoras2d(3, 4);
 /// assert_eq!(5.0, c);
@@ -50,7 +50,7 @@ pub fn pythagoras2d<T>(a: T, b: T) -> f64
 /// Takes values a, b and c and returns d according to d = sqrt(a² + b² + c²)
 /// # Examples
 /// ```
-/// use basics::pythagoras3d;
+/// use mathol::basics::pythagoras3d;
 ///
 /// let c = pythagoras2d(3, 4, 5);
 /// assert_eq!(7.071067812, c);

@@ -4,7 +4,7 @@
 /// If necessary, more conversions can be added.
 /// # Examples
 /// ```
-/// use basics::convert_trait::Convert;
+/// use mathol::basics::convert_trait::Convert;
 ///
 /// let a: i32 = 9;
 /// assert_eq!(9.0, a.to_f64());

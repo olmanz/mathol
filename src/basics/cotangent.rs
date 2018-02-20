@@ -4,7 +4,7 @@
 /// Returns the calculated cotangent as a radian value.
 /// # Examples
 /// ```
-/// use basics::cotangent::Cotangent;
+/// use mathol::basics::cotangent::Cotangent;
 ///
 /// let a = 2.7;
 /// assert_eq!(-2.115383021, a.cot());

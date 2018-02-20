@@ -446,6 +446,7 @@ impl<T> Matrice<T>
     /// #
     /// The matrice is of a 4x4 type and is
     ///
+    /// ```
     /// |  1 |  2 |  0 | -1 |
     ///
     /// |  4 |  0 |  3 |  2 |
@@ -453,14 +454,17 @@ impl<T> Matrice<T>
     /// |  9 |  0 |  0 |  4 |
     ///
     /// |  8 |  1 |  3 |  1 |
+    /// ```
     ///
     /// In that case, the submatrice for the position at row 2 and column 0 is
     ///
+    /// ```
     /// |  2 |  0 | -1 |
     ///
     /// |  0 | -3 |  2 |
     ///
     /// |  1 |  3 |  1 |
+    /// ```
     ///
     /// ```
     /// let m = Matrice::build_matrice(4, 4, vec![1, 2, 0, -1, 4, 0, -3, 2, 9, 0, 0, 4, 8, 1, 3, 1]).unwrap();
@@ -613,7 +617,8 @@ impl<T> Matrice<T>
         }
     }
 
-    pub fn shuffle(&self, c: &Vec<T>) -> (Vec<Vec<T>>, Vec<T>) {
+    /// Shuffles the rows in a matrice in an order so that the gaussian elimination is easier to compute
+    fn shuffle(&self, c: &Vec<T>) -> (Vec<Vec<T>>, Vec<T>) {
         let rows = self.rows;
         let columns = self.columns;
         let mut unordered_vec = Vec::new();
@@ -638,6 +643,33 @@ impl<T> Matrice<T>
         (shuffled_vec, d)
     }
 
+    /// Solves a linear equation system using the gaussian elimination
+    /// # Parameter
+    /// self: The matrice representing the equations
+    ///
+    /// c: The vector which includes the solutions of each of these equations
+    /// # Return value
+    /// If the LES is solvable, a tuple is returned. The first element of the tuple represents
+    /// the matrice and the second element is a vector which includes the solution of the LES
+    /// # Example
+    /// Consider that this is our linear equation system:
+    ///
+    /// ```
+    /// 2w +  x + 4y + 3z = 0
+    /// -w + 2x +  y -  z = 4
+    /// 3w + 4x -  y - 2z = 0
+    /// 4w + 3x - 2y +  z = 0
+    /// ```
+    /// The solution to this LES is w = 2, x = -4, y = 6 and z = -8.
+    ///
+    /// Here is how it can be solved using this function:
+    ///
+    /// ```
+    /// let m = Matrice::build_matrice(4, 4, vec![2, 1, 4, 3, -1, 2, 1, -1, 3, 4, -1, -2, 4, 3, 2, 1]).unwrap();
+    /// let (vecs, c) = m.solve(&vec![0, 4, 0, 0]).unwrap();
+    /// assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
+    /// assert_eq!(vec![2.0, -4.0, 6.0, -8.0], c);
+    /// ```
     pub fn solve(&self, c: &Vec<T>) -> Result<(Vec<Vec<f64>>, Vec<f64>), MatholError> {
         if self.is_solvable(&c) != Solvable::OneSolution {
             return Err(MatholError::MatriceCause(MatriceError {
