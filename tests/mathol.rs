@@ -1634,21 +1634,21 @@ fn test_is_solvable_3() {
     assert_eq!(Solvable::OneSolution, m.is_solvable(&c));
 }
 
-#[test]
-fn test_shuffle() {
-    let m = Matrice::build_matrice(4, 4, vec![0, 2, 4, 3, 3, 1, 0, 2, 0, 0, 0, 1, 0, 0, 2, 2]).unwrap();
-    let (vecs, c) = m.shuffle(&vec![1, 2, 3, 4]);
-    assert_eq!(vec![vec![3, 1, 0, 2], vec![0, 2, 4, 3], vec![0, 0, 2, 2], vec![0, 0, 0, 1]], vecs);
-    assert_eq!(vec![2, 1, 4, 3], c);
-}
-
 //#[test]
-//fn test_solve_1() {
-//    let m = Matrice::build_matrice(4, 4, vec![2, 1, 4, 3, -1, 2, 1, -1, 3, 4, -1, -2, 4, 3, 2, 1]).unwrap();
-//    let (vecs, c) = m.solve(&vec![0, 4, 0, 0]).unwrap();
-//    assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
-//    assert_eq!(vec![2.0, -4.0, 6.0, -8.0], c);
+//fn test_shuffle() {
+//    let m = Matrice::build_matrice(4, 4, vec![0, 2, 4, 3, 3, 1, 0, 2, 0, 0, 0, 1, 0, 0, 2, 2]).unwrap();
+//    let (vecs, c) = m.shuffle(&vec![1, 2, 3, 4]);
+//    assert_eq!(vec![vec![3, 1, 0, 2], vec![0, 2, 4, 3], vec![0, 0, 2, 2], vec![0, 0, 0, 1]], vecs);
+//    assert_eq!(vec![2, 1, 4, 3], c);
 //}
+
+#[test]
+fn test_solve_1() {
+    let m = Matrice::build_matrice(4, 4, vec![2, 1, 4, 3, -1, 2, 1, -1, 3, 4, -1, -2, 4, 3, 2, 1]).unwrap();
+    let (vecs, c) = m.solve(&vec![0, 4, 0, 0]).unwrap();
+    assert_eq!(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]], vecs);
+    assert_eq!(vec![2.0, -4.0, 6.0, -8.0], c);
+}
 
 //#[test]
 //fn test_solve_4() {
