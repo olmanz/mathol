@@ -1,0 +1,7 @@
+[package]
+name = "mathol"
+version = "0.1.0"
+authors = ["olmanz <oliver90.manz@googlemail.com>"]
+
+[dependencies]
+num = "0.1.41"
