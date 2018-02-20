@@ -1,7 +1,12 @@
 [package]
 name = "mathol"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["olmanz <oliver90.manz@googlemail.com>"]
+description = "Math library in Rust"
+homepage = "https://github.com/olmanz/mathol"
+repository = "https://github.com/olmanz/mathol"
+readme = "./README.md"
+license = "MIT"
 
 [dependencies]
 num = "0.1.41"
